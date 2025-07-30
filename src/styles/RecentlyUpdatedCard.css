@@ -1,0 +1,21 @@
+.recently-updated-card {
+  position: relative;
+  background-color: #1a1a1a;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%; 
+  max-width: 320px; 
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

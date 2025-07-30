@@ -1,0 +1,89 @@
+.section {
+  padding: 1.5rem 1rem; 
+  margin-bottom: 2.5rem; 
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem; 
+}
+
+.title {
+  font-size: 1.75rem; 
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.view-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #ef4444; 
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.view-all-btn:hover {
+  color: #dc2626;
+}
+
+.chevron-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 1rem; 
+}
+
+.loading-card {
+  aspect-ratio: 2 / 3;
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (min-width: 640px) {
+  .movies-grid {
+    grid-template-columns: repeat(3, 1fr); 
+  }
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+  .movies-grid {
+    grid-template-columns: repeat(4, 1fr); 
+  }
+}
+
+@media (min-width: 1024px) {
+  .movies-grid {
+    grid-template-columns: repeat(5, 1fr); 
+  }
+}
+
+@media (min-width: 1280px) {
+  .movies-grid {
+    grid-template-columns: repeat(6, 1fr); 
+  }
+}
