@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom"; // Đảm bảo Link đã được import
 import "../styles/DesktopNavigation.css"; 
 
 interface Genre {
@@ -71,21 +72,32 @@ export default function DesktopNavigation({ currentPath, selectedLanguage }: Des
     setIsGenreDropdownOpen(!isGenreDropdownOpen);
   };
 
+  // Hàm helper để xác định mediaType cho thể loại (mặc định là 'movie' vì API genre/movie/list)
+  // Nếu bạn muốn TV Shows cũng có thể loại, bạn sẽ cần fetch genre/tv/list riêng
+  // hoặc có một logic phức tạp hơn ở đây.
+  const getMediaTypeForGenre = (genreId: number): 'movie' | 'tv' => {
+      // Hiện tại, chúng ta chỉ fetch genre/movie/list, nên mặc định là 'movie'.
+      // Nếu bạn muốn hỗ trợ thể loại cho TV Shows, bạn sẽ cần một cơ chế khác.
+      return 'movie'; 
+  };
+
   return (
     <>
       <nav className="desktop-nav">
-        <a href="#" className={`nav-link ${currentPath === '/' ? 'nav-link-active' : ''}`}>
+        {/* ĐOẠN SỬA ĐỔI 1: Chuyển đổi liên kết "Trang chủ" từ <a> sang Link */}
+        <Link to="/" className={`nav-link ${currentPath === '/' ? 'nav-link-active' : ''}`}>
           Trang chủ
-        </a>
-        <a href="#" className={`nav-link ${currentPath === '/movies' ? 'nav-link-active' : ''}`}>
+        </Link>
+        {/* Các liên kết khác giữ nguyên */}
+        <Link to="/series" className={`nav-link ${currentPath === '/series' ? 'nav-link-active' : ''}`}>
           Phim bộ
-        </a>
-        <a href="#" className={`nav-link ${currentPath === '/movies' ? 'nav-link-active' : ''}`}>
+        </Link>
+        <Link to="/movies" className={`nav-link ${currentPath === '/movies' ? 'nav-link-active' : ''}`}>
           Phim lẻ
-        </a>
-        <a href="#" className={`nav-link ${currentPath === '/tv-shows' ? 'nav-link-active' : ''}`}>
+        </Link>
+        <Link to="/tv-shows" className={`nav-link ${currentPath === '/tv-shows' ? 'nav-link-active' : ''}`}>
           TV Shows
-        </a>
+        </Link> 
         <div className="genre-dropdown-container" ref={genreDropdownRef}> 
           <a href="#" className="nav-link" onClick={toggleGenreDropdown} ref={genreNavLinkRef}>
             Thể loại
@@ -98,9 +110,15 @@ export default function DesktopNavigation({ currentPath, selectedLanguage }: Des
               <div className="genre-list">
                 {genres.length > 0 ? (
                   genres.map((genre) => (
-                    <a href={`/genre/${genre.id}`} key={genre.id} className="genre-item">
+                    // ĐOẠN SỬA ĐỔI 2: Thay đổi đường dẫn Link cho từng thể loại
+                    <Link 
+                      to={`/genre/${getMediaTypeForGenre(genre.id)}/${genre.id}?name=${encodeURIComponent(genre.name)}`} 
+                      key={genre.id} 
+                      className="genre-item"
+                      onClick={() => setIsGenreDropdownOpen(false)} // Đóng dropdown khi click
+                    >
                       {genre.name}
-                    </a>
+                    </Link>
                   ))
                 ) : (
                   <div className="no-genres">Đang tải thể loại...</div>

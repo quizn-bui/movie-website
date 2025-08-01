@@ -13,7 +13,13 @@ interface Movie {
   date: string
 }
 
-const RecentlyUpdatedSection: React.FC = () => {
+interface RecentlyUpdatedSectionProps {
+  title: string;
+  endpoint: string;
+}
+
+// BƯỚC 2 & 3: Sử dụng interface và destructure props
+const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, endpoint }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
@@ -29,7 +35,7 @@ const RecentlyUpdatedSection: React.FC = () => {
   const getImageUrl = (posterPath: string): string => {
     console.log("Poster Path received:", posterPath);
     if (!posterPath) {
-      return "/placeholder-image.jpg" 
+      return ""; 
     }
     return `${TMDB_IMAGE_BASE_URL}${posterPath}`
   }
@@ -51,7 +57,7 @@ const RecentlyUpdatedSection: React.FC = () => {
       }).format(date)
     } catch (e) {
       console.error("Error formatting date:", dateString, e)
-      return dateString 
+      return dateString
     }
   }
 
@@ -62,13 +68,13 @@ const RecentlyUpdatedSection: React.FC = () => {
         setError(null)
 
         const response = await fetch(
-          `${TMDB_BASE_URL}/trending/all/week?api_key=${TMDB_API_KEY}&language=vi-VN`
+          `${TMDB_BASE_URL}/${endpoint}?api_key=${TMDB_API_KEY}&language=vi-VN`
         )
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data = await response.json()
-        const trendingContent: any[] = data.results 
+        const trendingContent: any[] = data.results
 
         const transformedMovies: Movie[] = trendingContent
           .slice(0, 20)
@@ -76,8 +82,8 @@ const RecentlyUpdatedSection: React.FC = () => {
             id: item.id,
             title: item.title || item.name || "Unknown Title",
             poster: getImageUrl(item.poster_path),
-            seriesInfo: generateSeriesInfo(item), 
-            date: formatDate(item.release_date || item.first_air_date), 
+            seriesInfo: generateSeriesInfo(item),
+            date: formatDate(item.release_date || item.first_air_date),
           }))
 
         setMovies(transformedMovies)
@@ -90,7 +96,7 @@ const RecentlyUpdatedSection: React.FC = () => {
     }
 
     fetchMovies()
-  }, []) 
+  }, [endpoint, TMDB_API_KEY, TMDB_BASE_URL])
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true)
@@ -131,7 +137,7 @@ const RecentlyUpdatedSection: React.FC = () => {
     return (
       <section className="recently-updated-section">
         <div className="section-container">
-          <h2 className="section-title">Recently Updated</h2>
+          <h2 className="section-title">{title}</h2>
           <div className="loading-container">
             <div className="loading-spinner"></div>
             <p className="loading-text">Loading movies...</p>
@@ -145,7 +151,7 @@ const RecentlyUpdatedSection: React.FC = () => {
     return (
       <section className="recently-updated-section">
         <div className="section-container">
-          <h2 className="section-title">Recently Updated</h2>
+          <h2 className="section-title">{title}</h2>
           <div className="error-container">
             <p className="error-text">{error}</p>
             <button className="retry-button" onClick={() => window.location.reload()}>
@@ -160,7 +166,7 @@ const RecentlyUpdatedSection: React.FC = () => {
   return (
     <section className="recently-updated-section">
       <div className="section-container">
-        <h2 className="section-title">Recently Updated</h2>
+        <h2 className="section-title">{title}</h2>
         <div
           className={`flick-swiper-container ${isDragging ? "dragging" : ""}`}
           ref={scrollContainerRef}

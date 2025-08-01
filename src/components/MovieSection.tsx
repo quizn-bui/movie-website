@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react"
 import MovieCard from "./MovieCard"
 import { ChevronRight } from "lucide-react"
-
-import "../styles/MovieSection.css" 
+import "../styles/MovieSection.css"
 
 interface Movie {
   id: number
@@ -15,6 +14,7 @@ interface Movie {
   release_date?: string
   first_air_date?: string
   overview: string
+  media_type?: 'movie' | 'tv'
 }
 
 interface MovieSectionProps {
@@ -32,15 +32,22 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
 
   const fetchMovies = async () => {
     try {
-      const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-      const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
+      const API_KEY = import.meta.env.VITE_TMDB_API_KEY
+      const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL
 
       const response = await fetch(
         `${BASE_URL}/${endpoint}?api_key=${API_KEY}&language=vi-VN&page=1`
-      );
+      )
 
       const data = await response.json()
-      setMovies(data.results)
+      const mediaType = endpoint.includes('movie') ? 'movie' : endpoint.includes('tv') ? 'tv' : undefined;
+
+      const resultsWithMediaType = data.results.map((item: any) => ({
+        ...item,
+        media_type: item.media_type || mediaType
+      }));
+      
+      setMovies(resultsWithMediaType)
       setLoading(false)
     } catch (error) {
       console.error(`Error fetching ${title}:`, error)
@@ -50,13 +57,13 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
 
   const getVisibleMovies = () => {
     if (typeof window !== "undefined") {
-      if (window.innerWidth >= 1280) return movies.slice(0, 6) 
-      if (window.innerWidth >= 1024) return movies.slice(0, 5) 
-      if (window.innerWidth >= 768) return movies.slice(0, 4) 
-      if (window.innerWidth >= 640) return movies.slice(0, 3) 
-      return movies.slice(0, 2) 
+      if (window.innerWidth >= 1280) return movies.slice(0, 6)
+      if (window.innerWidth >= 1024) return movies.slice(0, 5)
+      if (window.innerWidth >= 768) return movies.slice(0, 4)
+      if (window.innerWidth >= 640) return movies.slice(0, 3)
+      return movies.slice(0, 2)
     }
-    return movies.slice(0, 6) 
+    return movies.slice(0, 6)
   }
 
   if (loading) {
@@ -65,7 +72,7 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
         <div className="section-header">
           <h2 className="title">{title}</h2>
         </div>
-        <div className="movies-grid"> 
+        <div className="movies-grid">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="loading-card" />
           ))}
@@ -83,7 +90,7 @@ export default function MovieSection({ title, endpoint }: MovieSectionProps) {
           <ChevronRight className="chevron-icon" />
         </button>
       </div>
-      <div className="movies-grid"> 
+      <div className="movies-grid">
         {getVisibleMovies().map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}

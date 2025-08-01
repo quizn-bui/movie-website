@@ -134,7 +134,7 @@ export default function Header() {
         <div className="header-content">
           <div className="logo-section">
             <a href="/" className="logo-link">
-              <h1 className="logo">MovieStream</h1>
+              <h1 className="logo">MoviX</h1>
             </a>
           </div>
 

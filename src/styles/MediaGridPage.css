@@ -1,0 +1,92 @@
+.media-grid-page {
+  background-color: #1a202c;
+  min-height: 100vh;
+  color: #fff;
+  padding: 30px;
+  margin-top: 100px;
+}
+
+.back-button {
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  background-color: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #b91c1c;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.media-item {
+  background-color: #2d3748;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.media-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+.media-info {
+  padding: 8px;
+}
+
+.media-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+.media-rating {
+  font-size: 12px;
+  color: #a0aec0;
+  margin: 4px 0 0;
+}
+
+.loading-initial,
+.loading-message,
+.no-more-media {
+  text-align: center;
+  margin-top: 20px;
+  color: #ccc;
+}
+
+.load-more-button {
+  display: block;
+  width: fit-content;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.load-more-button:hover {
+  background-color: #0056b3;
+}
+
+
