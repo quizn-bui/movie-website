@@ -6,7 +6,7 @@ import { Search } from "lucide-react"
 import MovieCard from "./MovieCard"
 import "../styles/SearchPage.css"
 
-interface Movie {
+export interface Movie {
   id: number
   title: string
   name?: string
@@ -15,6 +15,7 @@ interface Movie {
   release_date: string
   first_air_date?: string
   overview: string
+  media_type: "movie" | "tv" | "person";
 }
 
 export default function SearchPage() {
@@ -42,13 +43,14 @@ export default function SearchPage() {
         setError(null)
 
         const apiKey = import.meta.env.VITE_TMDB_API_KEY
-
-        if (!apiKey) {
+        const baseUrl = import.meta.env.VITE_TMDB_BASE_URL
+        
+        if (!apiKey || !baseUrl) {
           throw new Error("Missing API configuration")
         }
 
         const endpoint = activeFilter === "movie" ? "/search/movie" : "/search/person"
-        const url = `https://api.themoviedb.org/3${endpoint}?api_key=${apiKey}&query=${encodeURIComponent(searchQuery)}&language=vi-VN&page=${currentPage}`
+        const url = `${baseUrl}${endpoint}?api_key=${apiKey}&query=${encodeURIComponent(searchQuery)}&language=vi-VN&page=${currentPage}`
 
         const response = await fetch(url)
 
@@ -193,7 +195,11 @@ export default function SearchPage() {
         <>
           <div className="search-results-grid">
             {searchResults.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
+              <MovieCard 
+                  key={movie.id} 
+                  movie={movie} 
+                  mediaType={movie.media_type}
+              />
             ))}
           </div>
 

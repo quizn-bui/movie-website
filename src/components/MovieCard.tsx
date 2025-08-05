@@ -2,24 +2,27 @@
 
 import type React from "react"
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import "../styles/MovieCard.css"
 
 export interface Movie {
   id: number
   title: string
-  name?: string 
+  name?: string
   poster_path: string | null;
   vote_average: number
   release_date: string
-  first_air_date?: string 
+  first_air_date?: string
   overview: string
+  media_type?: string 
 }
 
 interface MovieCardProps {
   movie: Movie
+  mediaType: string
 }
 
-const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
+const MovieCard: React.FC<MovieCardProps> = ({ movie, mediaType }) => {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
@@ -48,47 +51,51 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
   }
 
   return (
-    <div className="movie-card">
-      <div className="movie-poster-container">
-        {!imageLoaded && !imageError && (
-          <div className="image-placeholder">
-            <div className="loading-spinner"></div>
+    <Link to={`/${mediaType}/${movie.id}`} className="movie-card-link">
+      <div className="movie-card">
+        <div className="movie-poster-container">
+          {!imageLoaded && !imageError && (
+            <div className="image-placeholder">
+              <div className="loading-spinner"></div>
+            </div>
+          )}
+
+          <img
+            src={posterUrl || "/placeholder.svg"}
+            alt={title}
+            className={`movie-poster ${imageLoaded ? "loaded" : ""}`}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => {
+              setImageError(true)
+              setImageLoaded(true)
+            }}
+          />
+
+          <div className="movie-overlay">
+            <button className="play-button">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M8 5v14l11-7z" fill="currentColor" />
+              </svg>
+            </button>
           </div>
-        )}
 
-        <img
-          src={posterUrl || "/placeholder.svg"}
-          alt={title}
-          className={`movie-poster ${imageLoaded ? "loaded" : ""}`}
-          onLoad={() => setImageLoaded(true)}
-          onError={() => {
-            setImageError(true)
-            setImageLoaded(true)
-          }}
-        />
-
-        <div className="movie-overlay">
-          <button className="play-button">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M8 5v14l11-7z" fill="currentColor" />
-            </svg>
-          </button>
+          {movie.vote_average > 0 && (
+            <div className="rating-badge">
+              <span className="rating-text" style={{ color: getRatingColor(movie.vote_average) }}>
+                ★ {formatRating(movie.vote_average)}
+              </span>
+            </div>
+          )}
         </div>
 
-        {movie.vote_average > 0 && (
-          <div className="rating-badge">
-            <span className="rating-text" style={{ color: getRatingColor(movie.vote_average) }}>
-              ★ {formatRating(movie.vote_average)}
-            </span>
+        <div className="movie-info">
+          <h3 className="movie-title">{title}</h3>
+          <div className="movie-meta">
+            {releaseDate && <span className="movie-year">{getYear(releaseDate)}</span>}
           </div>
-        )}
+        </div>
       </div>
-
-      <div className="movie-info">
-        <h3 className="movie-title">{title}</h3>
-        <div className="movie-meta">{releaseDate && <span className="movie-year">{getYear(releaseDate)}</span>}</div>
-      </div>
-    </div>
+    </Link>
   )
 }
 

@@ -1,7 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import '../styles/MediaGridPage.css';
-import MovieCard, { Movie } from './MovieCard';
+"use client"
+
+import React, { useState, useEffect, useCallback } from "react"
+import { useNavigate } from "react-router-dom"
+import '../styles/MediaGridPage.css'
+import MovieCard from './MovieCard'
+
+export interface Movie {
+  id: number;
+  title: string;
+  name?: string;
+  poster_path: string;
+  vote_average: number;
+  release_date: string;
+  first_air_date?: string;
+  overview: string;
+  media_type?: "movie" | "tv";
+}
 
 interface MediaGridPageProps {
   title: string;
@@ -14,8 +28,7 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-
-  const TMDB_IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_BASE_URL || 'https://image.tmdb.org/t/p/w500';
+  const mediaType = endpoint.includes('movie') ? 'movie' : 'tv';
 
   useEffect(() => {
     setMedia([]);
@@ -44,8 +57,13 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
         throw new Error(`Không thể lấy dữ liệu từ endpoint ${endpoint}, trang ${page}. Status: ${response.status}`);
       }
       const data = await response.json();
+      
+      const moviesWithMediaType = data.results.map((item: any) => ({
+        ...item,
+        media_type: endpoint.includes('movie') ? 'movie' : 'tv'
+      }));
 
-      setMedia(data.results || []);
+      setMedia(moviesWithMediaType || []);
       setTotalPages(data.total_pages);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách media:", error);
@@ -145,7 +163,10 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
         <div className="media-grid">
           {media.length > 0 ? (
             media.map((item) => (
-              <MovieCard key={item.id} movie={item} />
+              <MovieCard 
+                key={item.id} 
+                movie={item} 
+                mediaType={mediaType} />
             ))
           ) : (
             <p className="loading-initial">Không có dữ liệu.</p>

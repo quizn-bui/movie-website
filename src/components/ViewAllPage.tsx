@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from 'react';
 import '../styles/ViewAllPage.css';
 import MovieCard, { Movie }from './MovieCard'; 
@@ -16,6 +18,7 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
 
   const apiKey = import.meta.env.VITE_TMDB_API_KEY;
   const baseUrl = import.meta.env.VITE_TMDB_BASE_URL;
+  const mediaType = endpoint.includes('movie') ? 'movie' : 'tv';
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -37,7 +40,12 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
         
         const data = await response.json();
         
-        setMovies(data.results);
+        const moviesWithMediaType = data.results.map((item: any) => ({
+          ...item,
+          media_type: mediaType
+        }));
+        
+        setMovies(moviesWithMediaType);
         setError(null);
       } catch (e) {
         console.error("Error fetching movies:", e);
@@ -52,7 +60,7 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
     };
 
     fetchMovies();
-  }, [apiKey, baseUrl, endpoint]);
+  }, [apiKey, baseUrl, endpoint, mediaType]);
 
   if (loading) {
     return <div className="loading-state">Đang tải phim...</div>;
@@ -96,7 +104,10 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
       </div>
       <div className="movie-grid">
         {movies.map(movie => (
-          <MovieCard key={movie.id} movie={movie} />
+          <MovieCard 
+          key={movie.id} 
+          movie={movie} 
+          mediaType={mediaType} />
         ))}
       </div>
     </div>

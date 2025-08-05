@@ -14,20 +14,21 @@ interface Movie {
   release_date: string;
   first_air_date?: string;
   overview: string;
+  media_type: "movie" | "tv";
 }
 
 interface MovieSectionProps {
   title: string;
   endpoint: string;
   showViewAll?: boolean;
-  onViewAll?: () => void; 
+  onViewAll?: () => void;
 }
 
 const MovieSection: React.FC<MovieSectionProps> = ({
   title,
   endpoint,
   showViewAll = true,
-  onViewAll, 
+  onViewAll,
 }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,7 @@ const MovieSection: React.FC<MovieSectionProps> = ({
           throw new Error("Missing API configuration");
         }
 
-        const url = `${baseUrl}/${endpoint}?api_key=${apiKey}&language=en-US&page=1`;
+        const url = `${baseUrl}/${endpoint}?api_key=${apiKey}&language=vi-VN&page=1`;
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -54,7 +55,14 @@ const MovieSection: React.FC<MovieSectionProps> = ({
         }
 
         const data = await response.json();
-        setMovies(data.results?.slice(0, 20) || []);
+        
+        const transformedMovies = data.results?.slice(0, 20).map((item: any) => ({
+          ...item,
+          // Xác định media_type dựa trên endpoint
+          media_type: endpoint.includes("movie") ? "movie" : "tv"
+        }));
+
+        setMovies(transformedMovies || []);
       } catch (error) {
         console.error("Error fetching movies:", error);
         setError(error instanceof Error ? error.message : "Unknown error");
@@ -105,7 +113,6 @@ const MovieSection: React.FC<MovieSectionProps> = ({
         <h2 className="section-title">{title}</h2>
         {showViewAll && (
           <button className="view-all-btn" onClick={onViewAll}>
-            {" "}
             View all →
           </button>
         )}
@@ -114,7 +121,11 @@ const MovieSection: React.FC<MovieSectionProps> = ({
       <div className="movies-container">
         <div className="movies-scroll">
           {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <MovieCard 
+              key={movie.id} 
+              movie={movie} 
+              mediaType={movie.media_type}
+            />
           ))}
         </div>
       </div>

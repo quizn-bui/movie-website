@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import MediaGridPage from "./components/MediaGridPage";
 import GenreMediaPage from "./components/GenreMediaPage";
 import SearchPage from "./components/SearchPage"; 
+import DetailPage from "./components/MovieDetail";
 import "./App.css";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/tv-shows" element={<MediaGridPage title="TV Shows" endpoint="tv/top_rated" />} />
           <Route path="/genre/:mediaType/:genreId" element={<GenreMediaPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/:mediaType/:id" element={<DetailPage />} />
         </Routes>
       </main>
       <Footer />

@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useRef, useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import RecentlyUpdatedCard from "./RecentlyUpdatedCard"
 import "../styles/RecentlyUpdatedSection.css"
 
@@ -9,6 +10,7 @@ interface Movie {
   id: number
   title: string
   poster: string
+  mediaType: "movie" | "tv"
   seriesInfo: string
   date: string
 }
@@ -23,6 +25,7 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
+  const [wasDragged, setWasDragged] = useState(false)
   const [movies, setMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -32,15 +35,14 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
   const TMDB_IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_BASE_URL
 
   const getImageUrl = (posterPath: string): string => {
-    console.log("Poster Path received:", posterPath);
     if (!posterPath) {
-      return ""; 
+      return ""
     }
     return `${TMDB_IMAGE_BASE_URL}${posterPath}`
   }
 
-  const generateSeriesInfo = (item: any): string => {
-    return item.media_type === "movie" ? "Movie" : "TV Series"
+  const getSeriesInfo = (item: any): string => {
+    return item.media_type === "movie" ? "movie" : "TV series"
   }
 
   const formatDate = (dateString: string | undefined): string => {
@@ -49,6 +51,9 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
     }
     try {
       const date = new Date(dateString)
+      if (isNaN(date.getTime())) {
+        return "N/A"
+      }
       return new Intl.DateTimeFormat("en-US", {
         year: "numeric",
         month: "short",
@@ -56,7 +61,7 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
       }).format(date)
     } catch (e) {
       console.error("Error formatting date:", dateString, e)
-      return dateString
+      return "N/A"
     }
   }
 
@@ -65,23 +70,31 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
       try {
         setLoading(true)
         setError(null)
+        
+        if (!TMDB_API_KEY || !TMDB_BASE_URL) {
+          throw new Error("Missing API configuration.")
+        }
 
         const response = await fetch(
           `${TMDB_BASE_URL}/${endpoint}?api_key=${TMDB_API_KEY}&language=vi-VN`
         )
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
+        
         const data = await response.json()
-        const trendingContent: any[] = data.results
+        const trendingContent: any[] = data.results || []
 
         const transformedMovies: Movie[] = trendingContent
+          .filter(item => item.poster_path)
           .slice(0, 20)
           .map((item) => ({
             id: item.id,
             title: item.title || item.name || "Unknown Title",
             poster: getImageUrl(item.poster_path),
-            seriesInfo: generateSeriesInfo(item),
+            mediaType: item.media_type,
+            seriesInfo: getSeriesInfo(item),
             date: formatDate(item.release_date || item.first_air_date),
           }))
 
@@ -97,39 +110,33 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
     fetchMovies()
   }, [endpoint, TMDB_API_KEY, TMDB_BASE_URL])
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleDragStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!scrollContainerRef.current) return
     setIsDragging(true)
-    setStartX(e.pageX - (scrollContainerRef.current?.offsetLeft || 0))
-    setScrollLeft(scrollContainerRef.current?.scrollLeft || 0)
+    setWasDragged(false)
+    const clientX = 'touches' in e ? e.touches[0].pageX : e.pageX
+    setStartX(clientX - scrollContainerRef.current.offsetLeft)
+    setScrollLeft(scrollContainerRef.current.scrollLeft)
   }
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleDragging = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!isDragging || !scrollContainerRef.current) return
-    e.preventDefault()
-    const x = e.pageX - (scrollContainerRef.current.offsetLeft || 0)
-    const walk = (x - startX) * 2
+    const clientX = 'touches' in e ? e.touches[0].pageX : e.pageX
+    const walk = (clientX - (scrollContainerRef.current.offsetLeft + startX)) * 2
     scrollContainerRef.current.scrollLeft = scrollLeft - walk
+    if (Math.abs(walk) > 5) {
+      setWasDragged(true)
+    }
   }
 
-  const handleMouseUp = () => {
+  const handleDragEnd = () => {
     setIsDragging(false)
   }
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true)
-    setStartX(e.touches[0].pageX - (scrollContainerRef.current?.offsetLeft || 0))
-    setScrollLeft(scrollContainerRef.current?.scrollLeft || 0)
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return
-    const x = e.touches[0].pageX - (scrollContainerRef.current.offsetLeft || 0)
-    const walk = (x - startX) * 2
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk
-  }
-
-  const handleTouchEnd = () => {
-    setIsDragging(false)
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (wasDragged) {
+      e.preventDefault()
+    }
   }
 
   if (loading) {
@@ -169,17 +176,24 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
         <div
           className={`flick-swiper-container ${isDragging ? "dragging" : ""}`}
           ref={scrollContainerRef}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleDragStart}
+          onMouseMove={handleDragging}
+          onMouseUp={handleDragEnd}
+          onMouseLeave={handleDragEnd}
+          onTouchStart={handleDragStart}
+          onTouchMove={handleDragging}
+          onTouchEnd={handleDragEnd}
         >
           <div className="movies-list">
             {movies.map((movie) => (
-              <RecentlyUpdatedCard key={movie.id} movie={movie} />
+              <Link
+                key={movie.id}
+                to={`/${movie.mediaType}/${movie.id}`}
+                onClick={handleLinkClick}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <RecentlyUpdatedCard movie={movie} />
+              </Link>
             ))}
           </div>
         </div>
