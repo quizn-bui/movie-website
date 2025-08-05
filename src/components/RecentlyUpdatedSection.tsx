@@ -18,7 +18,6 @@ interface RecentlyUpdatedSectionProps {
   endpoint: string;
 }
 
-// BƯỚC 2 & 3: Sử dụng interface và destructure props
 const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, endpoint }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)

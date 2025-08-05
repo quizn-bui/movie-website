@@ -12,13 +12,11 @@
 }
 
 .header.scrolled {
-  background-color: rgba(17, 24, 39, 0.85); /* Hơi trong hơn một chút */
+  background-color: rgba(17, 24, 39, 0.85); 
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid #374151; /* Hiển thị border */
+  border-bottom: 1px solid #374151; 
 }
 
-/* Các kiểu hiện có bên dưới... */
-/* Thêm style cho form để nó chiếm đủ không gian */
 .search-wrapper {
   position: relative;
   width: 100%;
@@ -79,7 +77,6 @@
   color: #ef4444;
 }
 
-/* Thêm position: relative cho search-container để định vị dropdown */
 .search-container {
   position: relative;
   display: none;
@@ -89,10 +86,9 @@
   margin: 0 2rem;
 }
 
-/* Dropdown chứa kết quả tìm kiếm */
 .search-results-dropdown {
   position: absolute;
-  top: calc(100% + 8px); /* Nằm ngay dưới ô tìm kiếm, có một khoảng cách nhỏ */
+  top: calc(100% + 8px); 
   left: 0;
   right: 0;
   background-color: #1f2937;
@@ -100,11 +96,10 @@
   border-radius: 0.5rem;
   max-height: 400px;
   overflow-y: auto;
-  z-index: 60; /* Cao hơn các element khác */
+  z-index: 60; 
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Mỗi mục kết quả */
 .search-result-item {
   display: flex;
   align-items: center;
@@ -118,17 +113,15 @@
   background-color: #374151;
 }
 
-/* Poster phim trong kết quả */
 .result-poster {
   width: 40px;
   height: 60px;
   object-fit: cover;
   border-radius: 4px;
   margin-right: 1rem;
-  flex-shrink: 0; /* Ngăn ảnh bị co lại */
+  flex-shrink: 0; 
 }
 
-/* Thông tin phim (tên, năm) */
 .result-info {
   display: flex;
   flex-direction: column;
@@ -145,7 +138,6 @@
   margin-top: 0.25rem;
 }
 
-/* Thông báo khi không có kết quả */
 .no-results {
   padding: 1rem;
   text-align: center;
@@ -293,11 +285,6 @@
   }
 }
 
-
-
-/* Các kiểu hiện có của bạn */
-
-/* --- Bổ sung cho phần chọn ngôn ngữ --- */
 .web-language {
   position: relative;   
   display: flex;

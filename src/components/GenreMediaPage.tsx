@@ -5,11 +5,11 @@ import MediaGridPage from './MediaGridPage';
 const GenreMediaPage: React.FC = () => {
   const { mediaType, genreId } = useParams<{ mediaType: string; genreId: string }>();
   const [searchParams] = useSearchParams();
-  const genreName = searchParams.get('name'); // Lấy tên thể loại từ query parameter 'name'
+  const genreName = searchParams.get('name'); 
 
-  // Xây dựng endpoint dựa trên mediaType và genreId
+ 
   let endpoint = '';
-  let pageTitle = 'Thể loại'; // Tiêu đề mặc định
+  let pageTitle = 'Thể loại'; 
 
   if (mediaType === 'movie' && genreId) {
     endpoint = `discover/movie?with_genres=${genreId}`;
@@ -18,11 +18,10 @@ const GenreMediaPage: React.FC = () => {
     endpoint = `discover/tv?with_genres=${genreId}`;
     pageTitle = genreName ? `TV Shows Thể loại: ${genreName}` : 'TV Shows theo Thể loại';
   } else {
-    // Xử lý trường hợp không hợp lệ, ví dụ: hiển thị lỗi hoặc redirect
+
     return <p>Lỗi: Không tìm thấy thể loại hoặc loại nội dung không hợp lệ.</p>;
   }
 
-  // Truyền endpoint và pageTitle cho MediaGridPage
   return (
     <MediaGridPage title={pageTitle} endpoint={endpoint} />
   );

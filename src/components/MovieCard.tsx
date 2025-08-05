@@ -1,142 +1,95 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Play, Plus, Star } from "lucide-react";
-import "../styles/MovieCard.css";
+import type React from "react"
+import { useState } from "react"
+import "../styles/MovieCard.css"
 
-interface Media {
-  id: number;
-  title?: string;
-  name?: string;
-  poster_path: string;
-  vote_average: number;
-  release_date?: string;
-  first_air_date?: string;
-  overview: string;
-  genre_ids?: number[];
-  media_type?: 'movie' | 'tv';
+export interface Movie {
+  id: number
+  title: string
+  name?: string 
+  poster_path: string | null;
+  vote_average: number
+  release_date: string
+  first_air_date?: string 
+  overview: string
 }
 
 interface MovieCardProps {
-  movie: Media;
+  movie: Movie
 }
 
-interface Genre {
-  id: number;
-  name: string;
-}
+const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
-export default function MovieCard({ movie }: MovieCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [genres, setGenres] = useState<Genre[]>([]);
-  const [runtime, setRuntime] = useState<number | null>(null);
+  const imageBaseUrl = import.meta.env.VITE_TMDB_IMAGE_BASE_URL
+  const title = movie.title || movie.name || "Unknown Title"
+  const releaseDate = movie.release_date || movie.first_air_date || ""
 
-  useEffect(() => {
-    fetchGenresAndRuntime();
-  }, [movie.id, movie.media_type]);
+  const posterUrl =
+    movie.poster_path && imageBaseUrl
+      ? `${imageBaseUrl}${movie.poster_path}`
+      : "/placeholder.svg?height=392&width=256&text=No+Image"
 
-  const fetchGenresAndRuntime = async () => {
-    try {
-      const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-      const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
-      const mediaType = movie.media_type || 'movie';
+  const formatRating = (rating: number) => {
+    return rating.toFixed(1)
+  }
 
-      const [genresResponse, detailsResponse] = await Promise.all([
-        fetch(`${BASE_URL}/genre/${mediaType}/list?api_key=${API_KEY}&language=vi-VN`),
-        fetch(`${BASE_URL}/${mediaType}/${movie.id}?api_key=${API_KEY}&language=vi-VN`),
-      ]);
+  const getYear = (dateString: string) => {
+    return dateString ? new Date(dateString).getFullYear() : ""
+  }
 
-      const genresData = await genresResponse.json();
-      setGenres(genresData.genres);
-
-      if (detailsResponse.ok) {
-        const detailsData = await detailsResponse.json();
-        setRuntime(detailsData.runtime || detailsData.episode_run_time?.[0]);
-      } else {
-        console.warn(`Could not fetch details for media ID: ${movie.id}. Status: ${detailsResponse.status}`);
-        setRuntime(null);
-      }
-      
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setRuntime(null);
-    }
-  };
-
-  const title = movie.title || movie.name || "Unknown Title";
-  const releaseDate = movie.release_date || movie.first_air_date;
-  const year = releaseDate ? new Date(releaseDate).getFullYear() : "N/A";
-
-  const getMovieGenres = () => {
-    if (!movie.genre_ids || !genres.length) return "Action, Drama";
-
-    return (
-      movie.genre_ids
-        .slice(0, 2)
-        .map((id) => genres.find((genre) => genre.id === id)?.name)
-        .filter(Boolean)
-        .join(", ") || "Action, Drama"
-    );
-  };
-
-  const formatRuntime = (minutes: number | null) => {
-    if (!minutes) {
-      return "N/A";
-    }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return `${hours}h ${remainingMinutes}m`;
-  };
+  const getRatingColor = (rating: number) => {
+    if (rating >= 8) return "#ffffffff"
+    if (rating >= 7) return "#ffffffff"
+    if (rating >= 6) return "#ffffffff"
+    return "#ffffffff"
+  }
 
   return (
-    <div
-      className="card"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="poster-container">
-        {!imageLoaded && <div className="image-placeholder" />}
+    <div className="movie-card">
+      <div className="movie-poster-container">
+        {!imageLoaded && !imageError && (
+          <div className="image-placeholder">
+            <div className="loading-spinner"></div>
+          </div>
+        )}
+
         <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          src={posterUrl || "/placeholder.svg"}
           alt={title}
-          className={`poster-image ${imageLoaded ? "image-loaded" : ""}`}
+          className={`movie-poster ${imageLoaded ? "loaded" : ""}`}
           onLoad={() => setImageLoaded(true)}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = "/placeholder.svg?height=300&width=200&text=No+Image";
+          onError={() => {
+            setImageError(true)
+            setImageLoaded(true)
           }}
         />
 
-        <div className={`hover-overlay ${isHovered ? "overlay-visible" : ""}`}>
-          <div className="play-button-container">
-            <button className="play-button">
-              <Play className="play-icon" />
-            </button>
+        <div className="movie-overlay">
+          <button className="play-button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M8 5v14l11-7z" fill="currentColor" />
+            </svg>
+          </button>
+        </div>
+
+        {movie.vote_average > 0 && (
+          <div className="rating-badge">
+            <span className="rating-text" style={{ color: getRatingColor(movie.vote_average) }}>
+              ★ {formatRating(movie.vote_average)}
+            </span>
           </div>
-        </div>
-
-        <div className="rating-badge">
-          <i className="fa-solid fa-star"></i>
-          {movie.vote_average.toFixed(1)}
-        </div>
-
-        <div className="quality-badge">HD</div>
+        )}
       </div>
 
       <div className="movie-info">
         <h3 className="movie-title">{title}</h3>
-        <div className="movie-details">
-          <div className="detail-row">
-            <span className="year">{year}</span>
-            <span className="separator">•</span>
-            <span className="duration">{formatRuntime(runtime)}</span>
-          </div>
-          <div className="detail-row">
-            <span className="genres">{getMovieGenres()}</span>
-          </div>
-        </div>
+        <div className="movie-meta">{releaseDate && <span className="movie-year">{getYear(releaseDate)}</span>}</div>
       </div>
     </div>
-  );
+  )
 }
+
+export default MovieCard

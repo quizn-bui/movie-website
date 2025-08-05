@@ -18,7 +18,6 @@
   letter-spacing: -0.5px;
 }
 
-/* Custom FlickSwiper Container */
 .flick-swiper-container {
   overflow-x: auto;
   overflow-y: hidden;
@@ -49,7 +48,6 @@
   width: max-content;
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
   .section-container {
     padding: 0 20px;
@@ -98,20 +96,17 @@
   }
 }
 
-/* Smooth scrolling animations */
 @media (prefers-reduced-motion: no-preference) {
   .flick-swiper-container {
     scroll-behavior: smooth;
   }
 }
 
-/* Focus styles for accessibility */
 .recently-updated-card:focus {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
-/* Loading state */
 .movies-list.loading {
   opacity: 0.7;
 }
@@ -130,7 +125,6 @@
   }
 }
 
-/* Loading States */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -164,7 +158,6 @@
   }
 }
 
-/* Error States */
 .error-container {
   display: flex;
   flex-direction: column;

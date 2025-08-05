@@ -1,14 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/MediaGridPage.css';
-
-interface MediaItem {
-  id: number;
-  title?: string;
-  name?: string;
-  poster_path: string;
-  vote_average: number;
-}
+import MovieCard, { Movie } from './MovieCard';
 
 interface MediaGridPageProps {
   title: string;
@@ -16,32 +9,28 @@ interface MediaGridPageProps {
 }
 
 const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
-  const [media, setMedia] = useState<MediaItem[]>([]);
+  const [media, setMedia] = useState<Movie[]>([]);
   const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(true);
   const navigate = useNavigate();
-  const loaderRef = useRef<HTMLDivElement>(null);
 
   const TMDB_IMAGE_BASE_URL = import.meta.env.VITE_TMDB_IMAGE_BASE_URL || 'https://image.tmdb.org/t/p/w500';
 
   useEffect(() => {
     setMedia([]);
     setPage(1);
-    setHasMore(true);
-  }, [endpoint, title]);
+    setTotalPages(1);
+  }, [endpoint]);
 
-  const fetchMoreMedia = useCallback(async () => {
-    if (loading || !hasMore) return;
+  const fetchMedia = useCallback(async () => {
     setLoading(true);
-
     const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
     const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
 
     if (!API_KEY || !BASE_URL) {
       console.error("TMDB API Key or Base URL is not defined.");
       setLoading(false);
-      setHasMore(false);
       return;
     }
 
@@ -55,97 +44,116 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
         throw new Error(`Không thể lấy dữ liệu từ endpoint ${endpoint}, trang ${page}. Status: ${response.status}`);
       }
       const data = await response.json();
-      
-      if (Array.isArray(data.results) && data.results.length > 0) {
-        setMedia((prevMedia) => {
-          const existingIds = new Set(prevMedia.map(item => item.id));
-          const newMediaItems = data.results.filter(
-            (newItem: MediaItem) => !existingIds.has(newItem.id)
-          );
-          return [...prevMedia, ...newMediaItems];
-        });
-      } else {
-        setHasMore(false);
-      }
 
-      if (page >= data.total_pages) {
-        setHasMore(false);
-      }
-
+      setMedia(data.results || []);
+      setTotalPages(data.total_pages);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách media:", error);
-      setHasMore(false);
+      setMedia([]);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
-  }, [page, endpoint, loading, hasMore]);
+  }, [page, endpoint]);
 
   useEffect(() => {
-    if ((page === 1 && media.length === 0) || (page > 1 && !loading)) {
-      fetchMoreMedia();
-    }
-  }, [page, endpoint, fetchMoreMedia, loading, media.length]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
-    }
-
-    return () => {
-      if (loaderRef.current) {
-        observer.unobserve(loaderRef.current);
-      }
-    };
-  }, [hasMore, loading]);
+    fetchMedia();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [page, endpoint, fetchMedia]);
 
   const handleBack = () => {
     navigate("/");
   };
 
+  const renderPagination = () => {
+    const pagesToShow = 5;
+    const startPage = Math.max(1, page - Math.floor(pagesToShow / 2));
+    const endPage = Math.min(totalPages, startPage + pagesToShow - 1);
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <button
+          key={i}
+          className={`page-number ${i === page ? 'active' : ''}`}
+          onClick={() => setPage(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className="pagination">
+        {page > 1 && (
+          <button className="page-nav" onClick={() => setPage(page - 1)}>&lt; Trước</button>
+        )}
+        {startPage > 1 && (
+          <>
+            <button className="page-number" onClick={() => setPage(1)}>1</button>
+            <span className="pagination-dots">...</span>
+          </>
+        )}
+        {pageNumbers}
+        {endPage < totalPages && (
+          <>
+            <span className="pagination-dots">...</span>
+            <button className="page-number" onClick={() => setPage(totalPages)}>{totalPages}</button>
+          </>
+        )}
+        {page < totalPages && (
+          <button className="page-nav" onClick={() => setPage(page + 1)}>Sau &gt;</button>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="media-grid-page">
       <button onClick={handleBack} className="back-button">
-         Quay lại
+        Quay lại
       </button>
-      <h1 className="page-title">{title}</h1>
-      <div className="media-grid">
-        {media.length > 0 ? (
-          media.map((item) => (
-            <div key={item.id} className="media-item">
-              <img
-                src={item.poster_path ? `${TMDB_IMAGE_BASE_URL}${item.poster_path}` : "/placeholder.jpg"}
-                alt={item.title || item.name || 'poster'}
-                className="media-image"
-                loading="lazy" 
-              />
-              <div className="media-info">
-                <h2 className="media-name">{item.title || item.name}</h2>
-                <p className="media-rating">Đánh giá: {item.vote_average.toFixed(1)}/10</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="loading-initial">
-            {loading ? "Đang tải..." : "Không có dữ liệu hoặc lỗi tải."}
-          </p>
-        )}
-      </div>
 
-      <div ref={loaderRef} className="loader-container">
-        {loading && <p className="loading-message">Đang tải thêm...</p>}
-        {!loading && !hasMore && media.length > 0 && ( 
-          <p className="no-more-media">Đã hết nội dung để hiển thị.</p>
-        )}
+      <h1 className="page-title">{title}</h1>
+      <div className="breadcrumb">
+        Trang chủ / {title}
       </div>
+      <div className="filters-container">
+        <div className="filters-row">
+          <div className="filter-dropdown">
+            <span className="dropdown-label">Sắp xếp theo</span>
+            <span className="dropdown-arrow">▼</span>
+          </div>
+          <div className="filter-dropdown">
+            <span className="dropdown-label">Năm phát hành</span>
+            <span className="dropdown-arrow">▼</span>
+          </div>
+          <div className="filter-dropdown">
+            <span className="dropdown-label">Trạng thái</span>
+            <span className="dropdown-arrow">▼</span>
+          </div>
+          <div className="filter-dropdown">
+            <span className="dropdown-label">Thể loại</span>
+            <span className="dropdown-arrow">▼</span>
+          </div>
+          <button className="filter-button">Lọc phim</button>
+        </div>
+      </div>
+      {loading ? (
+        <p className="loading-initial">Đang tải...</p>
+      ) : (
+        <div className="media-grid">
+          {media.length > 0 ? (
+            media.map((item) => (
+              <MovieCard key={item.id} movie={item} />
+            ))
+          ) : (
+            <p className="loading-initial">Không có dữ liệu.</p>
+          )}
+        </div>
+      )}
+
+      {!loading && totalPages > 1 && renderPagination()}
     </div>
   );
 };

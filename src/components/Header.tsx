@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Menu, X, Globe, User } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Header.css";
 import DesktopNavigation from "./DesktopNavigation"; 
 
@@ -28,6 +29,9 @@ export default function Header() {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const languageDropdownRef = useRef<HTMLDivElement>(null);
   const authModalRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -105,10 +109,23 @@ export default function Header() {
     }
   };
 
+  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && searchQuery.trim() !== "") {
+        navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+        setSearchResults([]);
+        setIsSearchFocused(false);
+    }
+  };
+
   const handleLanguageChange = (lang: string) => {
     setSelectedLanguage(lang);
     localStorage.setItem("appLanguage", lang);
     setIsLanguageDropdownOpen(false);
+  };
+  
+  const handleLanguageClick = (e: React.MouseEvent, lang: string) => {
+    e.stopPropagation();
+    handleLanguageChange(lang);
   };
 
   const getLanguageDisplayName = (langCode: string) => {
@@ -139,8 +156,8 @@ export default function Header() {
           </div>
 
           <DesktopNavigation
-            currentPath={window.location.pathname} 
-            selectedLanguage={selectedLanguage} 
+            currentPath={location.pathname}
+            selectedLanguage={selectedLanguage}
           />
 
           <div className="search-container" ref={searchContainerRef}>
@@ -152,6 +169,7 @@ export default function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
+                onKeyDown={handleSearch}
                 className="search-input"
               />
             </div>
@@ -168,7 +186,7 @@ export default function Header() {
                         src={
                           movie.poster_path
                             ? `https://image.tmdb.org/t/p/w92${movie.poster_path}`
-                            : "https://via.placeholder.com/50x75.png?text=No+Image"
+                            : "https://dummyimage.com/50x75/000/fff&text=No+Image"
                         }
                         alt={movie.title}
                         className="result-poster"
@@ -205,19 +223,19 @@ export default function Header() {
               <div className="language-dropdown">
                 <div
                   className="language-option"
-                  onClick={() => handleLanguageChange("vi")}
+                  onClick={(e) => handleLanguageClick(e, "vi")}
                 >
                   Tiếng Việt
                 </div>
                 <div
                   className="language-option"
-                  onClick={() => handleLanguageChange("en")}
+                  onClick={(e) => handleLanguageClick(e, "en")}
                 >
                   English
                 </div>
                 <div
                   className="language-option"
-                  onClick={() => handleLanguageChange("zh")}
+                  onClick={(e) => handleLanguageClick(e, "zh")}
                 >
                   简体中文
                 </div>

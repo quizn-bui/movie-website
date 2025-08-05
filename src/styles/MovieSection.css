@@ -1,89 +1,94 @@
-.section {
-  padding: 1.5rem 1rem; 
-  margin-bottom: 2.5rem; 
+.movie-section {
+  margin-bottom: 40px;
+  width: 100%;
 }
 
 .section-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem; 
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 20px;
 }
 
-.title {
-  font-size: 1.75rem; 
-  font-weight: bold;
-  color: white;
+.section-title {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
   margin: 0;
 }
 
 .view-all-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   background: none;
   border: none;
-  color: #ef4444; 
-  font-size: 0.95rem;
+  color: #888888;
+  font-size: 16px;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .view-all-btn:hover {
-  color: #dc2626;
+  color: #ffffff;
 }
 
-.chevron-icon {
-  width: 1.1rem;
-  height: 1.1rem;
+.movies-container {
+  position: relative;
+  width: 100%;
 }
 
-.movies-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); 
-  gap: 1rem; 
+.movies-scroll {
+  display: flex;
+  gap: 16px;
+  padding: 0 20px 20px 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none ;
+  scrollbar-color: #333 transparent;
+  -webkit-overflow-scrolling: touch;
 }
 
-.loading-card {
-  aspect-ratio: 2 / 3;
-  background-color: #1f2937;
-  border-radius: 0.5rem;
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.movies-scroll::-webkit-scrollbar {
+  height: 8px;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
+.movies-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.movies-scroll::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+.movies-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.loading,
+.error,
+.no-movies {
+  color: #ffffff;
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    padding: 0 16px;
   }
-  50% {
-    opacity: 0.5;
-  }
-}
 
-@media (min-width: 640px) {
-  .movies-grid {
-    grid-template-columns: repeat(3, 1fr); 
+  .movies-scroll {
+    padding: 0 16px 20px 16px;
+    gap: 12px;
   }
-}
 
-@media (min-width: 768px) {
-  .title {
-    font-size: 2rem;
-  }
-  .movies-grid {
-    grid-template-columns: repeat(4, 1fr); 
-  }
-}
-
-@media (min-width: 1024px) {
-  .movies-grid {
-    grid-template-columns: repeat(5, 1fr); 
-  }
-}
-
-@media (min-width: 1280px) {
-  .movies-grid {
-    grid-template-columns: repeat(6, 1fr); 
+  .section-title {
+    font-size: 20px;
   }
 }
