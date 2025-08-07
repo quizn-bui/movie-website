@@ -58,7 +58,7 @@ const MovieSection: React.FC<MovieSectionProps> = ({
         
         const transformedMovies = data.results?.slice(0, 20).map((item: any) => ({
           ...item,
-          // Xác định media_type dựa trên endpoint
+
           media_type: endpoint.includes("movie") ? "movie" : "tv"
         }));
 

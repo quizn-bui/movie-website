@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom"; 
-import "../styles/DesktopNavigation.css"; 
+import { useState, useEffect, useRef, useContext } from "react";
+import { Link } from "react-router-dom";
+import "../styles/DesktopNavigation.css";
+import { LanguageContext } from "../context/LanguageContext";
 
 interface Genre {
   id: number;
@@ -8,15 +9,20 @@ interface Genre {
 }
 
 interface DesktopNavigationProps {
-  currentPath: string; 
-  selectedLanguage: string; 
+  currentPath: string;
 }
 
-export default function DesktopNavigation({ currentPath, selectedLanguage }: DesktopNavigationProps) {
-  const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false); 
+export default function DesktopNavigation({ currentPath }: DesktopNavigationProps) {
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    throw new Error("DesktopNavigation must be used within a LanguageProvider");
+  }
+  const { selectedLanguage } = languageContext;
+
+  const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
   const [genres, setGenres] = useState<Genre[]>([]);
-  const genreDropdownRef = useRef<HTMLDivElement>(null); 
-  const genreNavLinkRef = useRef<HTMLAnchorElement>(null); 
+  const genreDropdownRef = useRef<HTMLDivElement>(null);
+  const genreNavLinkRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     fetchGenres(selectedLanguage);
@@ -68,12 +74,12 @@ export default function DesktopNavigation({ currentPath, selectedLanguage }: Des
   };
 
   const toggleGenreDropdown = (event: React.MouseEvent) => {
-    event.preventDefault(); 
+    event.preventDefault();
     setIsGenreDropdownOpen(!isGenreDropdownOpen);
   };
 
   const getMediaTypeForGenre = (genreId: number): 'movie' | 'tv' => {
-      return 'movie'; 
+    return 'movie';
   };
 
   return (
@@ -90,24 +96,23 @@ export default function DesktopNavigation({ currentPath, selectedLanguage }: Des
         </Link>
         <Link to="/tv-shows" className={`nav-link ${currentPath === '/tv-shows' ? 'nav-link-active' : ''}`}>
           TV Shows
-        </Link> 
-        <div className="genre-dropdown-container" ref={genreDropdownRef}> 
+        </Link>
+        <div className="genre-dropdown-container" ref={genreDropdownRef}>
           <a href="#" className="nav-link" onClick={toggleGenreDropdown} ref={genreNavLinkRef}>
             Thể loại
             <span className={`genre-dropdown-arrow ${isGenreDropdownOpen ? 'open' : ''}`}></span>
           </a>
-
           {isGenreDropdownOpen && (
             <div className="genre-dropdown-content">
               <div className="genre-dropdown-pointer"></div>
               <div className="genre-list">
                 {genres.length > 0 ? (
                   genres.map((genre) => (
-                    <Link 
-                      to={`/genre/${getMediaTypeForGenre(genre.id)}/${genre.id}?name=${encodeURIComponent(genre.name)}`} 
-                      key={genre.id} 
+                    <Link
+                      to={`/genre/${getMediaTypeForGenre(genre.id)}/${genre.id}?name=${encodeURIComponent(genre.name)}`}
+                      key={genre.id}
                       className="genre-item"
-                      onClick={() => setIsGenreDropdownOpen(false)} 
+                      onClick={() => setIsGenreDropdownOpen(false)}
                     >
                       {genre.name}
                     </Link>

@@ -2,10 +2,10 @@ import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
-import MediaGridPage from "./components/MediaGridPage";
-import GenreMediaPage from "./components/GenreMediaPage";
-import SearchPage from "./components/SearchPage"; 
-import DetailPage from "./components/MovieDetail";
+import MediaGridPage from "./pages/MediaGridPage";
+import GenreMediaPage from "./pages/GenreMediaPage";
+import SearchPage from "./pages/SearchPage"; 
+import DetailPage from "./pages/MovieDetail";
 import "./App.css";
 
 export default function App() {

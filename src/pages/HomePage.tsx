@@ -2,7 +2,7 @@ import { useState } from "react";
 import Header from "../components/Header";
 import HeroSlider from "../components/HeroSlider";
 import MovieSection from "../components/MovieSection";
-import ViewAllPage from "../components/ViewAllPage";
+import ViewAllPage from "./ViewAllPage";
 import RecentlyUpdatedSection from "../components/RecentlyUpdatedSection";
 import "../App.css";
 

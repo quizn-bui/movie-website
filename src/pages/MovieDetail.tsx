@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import { Play, Calendar, Tv, Star } from "lucide-react"
+import MovieSection from "../components/MovieSection"
 import "../styles/MovieDetail.css"
 
 interface Genre {
@@ -52,29 +53,34 @@ export default function DetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [episodes, setEpisodes] = useState<Episode[]>([])
   const [selectedSeason, setSelectedSeason] = useState<number>(1)
+  const [relatedContent, setRelatedContent] = useState<any[]>([])
+  const [popularContent, setPopularContent] = useState<any[]>([])
 
   const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY
   const TMDB_BASE_URL = import.meta.env.VITE_TMDB_BASE_URL
 
-  const fetchEpisodes = useCallback(async (seasonNumber: number) => {
-    if (mediaType !== "tv") return
-    
-    try {
-      const episodesUrl = `${TMDB_BASE_URL}/tv/${id}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=vi-VN`
-      const episodesResponse = await fetch(episodesUrl)
-      
-      if (episodesResponse.ok) {
-        const episodesData = await episodesResponse.json()
-        setEpisodes(episodesData.episodes || [])
-      } else {
-        console.warn(`Could not fetch episodes for season ${seasonNumber}:`, episodesResponse.status)
+  const fetchEpisodes = useCallback(
+    async (seasonNumber: number) => {
+      if (mediaType !== "tv") return
+
+      try {
+        const episodesUrl = `${TMDB_BASE_URL}/tv/${id}/season/${seasonNumber}?api_key=${TMDB_API_KEY}&language=vi-VN`
+        const episodesResponse = await fetch(episodesUrl)
+
+        if (episodesResponse.ok) {
+          const episodesData = await episodesResponse.json()
+          setEpisodes(episodesData.episodes || [])
+        } else {
+          console.warn(`Could not fetch episodes for season ${seasonNumber}:`, episodesResponse.status)
+          setEpisodes([])
+        }
+      } catch (err) {
+        console.error("Error fetching episodes:", err)
         setEpisodes([])
       }
-    } catch (err) {
-      console.error("Error fetching episodes:", err)
-      setEpisodes([])
-    }
-  }, [id, mediaType, TMDB_API_KEY, TMDB_BASE_URL])
+    },
+    [id, mediaType, TMDB_API_KEY, TMDB_BASE_URL],
+  )
 
   const fetchAllData = useCallback(async () => {
     setLoading(true)
@@ -93,14 +99,39 @@ export default function DetailPage() {
       if (!detailResponse.ok) {
         throw new Error(`HTTP error! status: ${detailResponse.status}`)
       }
-      
+
       const detailData = await detailResponse.json()
       setDetail(detailData)
 
       if (currentMediaType === "tv" && detailData.seasons && detailData.seasons.length > 0) {
-        const latestSeason = detailData.seasons.length > 0 ? detailData.seasons[detailData.seasons.length - 1].season_number : 1
+        const latestSeason =
+          detailData.seasons.length > 0 ? detailData.seasons[detailData.seasons.length - 1].season_number : 1
         setSelectedSeason(latestSeason)
         fetchEpisodes(latestSeason)
+      }
+
+      const relatedUrl = `${TMDB_BASE_URL}/${currentMediaType}/${id}/recommendations?api_key=${TMDB_API_KEY}&language=vi-VN&page=1`
+      const relatedResponse = await fetch(relatedUrl)
+      if (relatedResponse.ok) {
+        const relatedData = await relatedResponse.json()
+        setRelatedContent(
+          (relatedData.results || []).map((item: any) => ({ ...item, media_type: currentMediaType })),
+        )
+      } else {
+        console.warn("Could not fetch related content:", relatedResponse.status)
+        setRelatedContent([])
+      }
+
+      const popularUrl = `${TMDB_BASE_URL}/${currentMediaType}/popular?api_key=${TMDB_API_KEY}&language=vi-VN&page=1`
+      const popularResponse = await fetch(popularUrl)
+      if (popularResponse.ok) {
+        const popularData = await popularResponse.json()
+        setPopularContent(
+          (popularData.results || []).map((item: any) => ({ ...item, media_type: currentMediaType })),
+        )
+      } else {
+        console.warn("Could not fetch popular content:", popularResponse.status)
+        setPopularContent([])
       }
     } catch (err) {
       console.error("Error fetching data:", err)
@@ -159,7 +190,7 @@ export default function DetailPage() {
   const mainTitle = detail.title || detail.name || "Unknown Title"
   const originalTitle = detail.original_title || detail.original_name || ""
   const releaseYear = new Date(detail.release_date || detail.first_air_date || "").getFullYear() || "N/A"
-  const genreNames = detail.genres?.map((g) => g.name).join(", ") || "Không rõ"
+  const genreNames = detail.genres?.map(g => g.name).join(", ") || "Không rõ"
   const runtimeFormatted = formatRuntime(detail)
 
   return (
@@ -181,25 +212,20 @@ export default function DetailPage() {
                 <Calendar size={16} /> {releaseYear}
               </span>
               <span className="badge rating">
-                <Star size={16} className="rating-star" /> 
-                {detail.vote_average?.toFixed(1) || "N/A"} / 10
+                <Star size={16} className="rating-star" /> {detail.vote_average?.toFixed(1) || "N/A"} / 10
               </span>
             </div>
 
             <div className="genre-tags">
-              {detail.genres?.map((genre) => (
+              {detail.genres?.map(genre => (
                 <span key={genre.id} className="genre-tag">
                   {genre.name}
                 </span>
               ))}
             </div>
 
-            {runtimeFormatted !== "N/A" && (
-              <p className="runtime">
-                Thời lượng: {runtimeFormatted}
-              </p>
-            )}
-            
+            {runtimeFormatted !== "N/A" && <p className="runtime">Thời lượng: {runtimeFormatted}</p>}
+
             <p className="overview-text">
               <strong>Tóm tắt:</strong> {detail.overview || "Không có tóm tắt."}
             </p>
@@ -210,7 +236,7 @@ export default function DetailPage() {
           </div>
 
           <div className="poster-column">
-            <img src={posterUrl} alt={mainTitle} className="detail-poster" />
+            <img src={posterUrl || "/placeholder.svg"} alt={mainTitle} className="detail-poster" />
           </div>
         </div>
 
@@ -218,7 +244,7 @@ export default function DetailPage() {
           <div className="season-list-section">
             <h2 className="section-heading">DANH SÁCH TẬP</h2>
             <div className="season-selector-wrapper">
-              {detail.seasons.map((season) => (
+              {detail.seasons.map(season => (
                 <button
                   key={season.id}
                   className={`season-button ${selectedSeason === season.season_number ? "active" : ""}`}
@@ -228,10 +254,9 @@ export default function DetailPage() {
                 </button>
               ))}
             </div>
-
             {episodes.length > 0 && (
               <div className="episode-list-scroll">
-                {episodes.map((episode) => (
+                {episodes.map(episode => (
                   <button key={episode.id} className="episode-button">
                     <Tv size={16} /> Tập {episode.episode_number}: {episode.name || "N/A"}
                   </button>
@@ -239,6 +264,18 @@ export default function DetailPage() {
               </div>
             )}
           </div>
+        )}
+
+        {relatedContent.length > 0 && (
+          <MovieSection title="PHIM LIÊN QUAN" 
+          endpoint={`${mediaType}/${id}/recommendations`}
+          showViewAll={false} />
+        )}
+
+        {popularContent.length > 0 && (
+          <MovieSection title="PHIM ĐỀ CỬ" 
+          endpoint={`${mediaType}/popular`}
+          showViewAll={false} />
         )}
       </div>
     </div>

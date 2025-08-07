@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import '../styles/MediaGridPage.css'
-import MovieCard from './MovieCard'
+import MovieCard from '../components/MovieCard'
 
 export interface Movie {
   id: number;

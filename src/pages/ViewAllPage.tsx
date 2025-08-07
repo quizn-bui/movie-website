@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import '../styles/ViewAllPage.css';
-import MovieCard, { Movie }from './MovieCard'; 
-
+import MovieCard, { Movie } from '../components/MovieCard';
+import FilterSelect from '../components/FilterSelect';
+import { sortOptions, yearOptions, genreOptions } from '../data/filterOptions'; 
 
 interface ViewAllPageProps {
   title: string;
@@ -16,9 +17,25 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [appliedFilters, setAppliedFilters] = useState({
+    sort: ['popularity.desc'],
+    year: [''],
+    genres: [''],
+  });
+
+  const [tempFilters, setTempFilters] = useState({
+    sort: ['popularity.desc'],
+    year: [''],
+    genres: [''],
+  });
+
   const apiKey = import.meta.env.VITE_TMDB_API_KEY;
   const baseUrl = import.meta.env.VITE_TMDB_BASE_URL;
   const mediaType = endpoint.includes('movie') ? 'movie' : 'tv';
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(tempFilters);
+  };
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -28,7 +45,21 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
         return;
       }
 
-      const url = `${baseUrl}/${endpoint}?api_key=${apiKey}&language=vi-VN&page=1`;
+      let url = `${baseUrl}/discover/${mediaType}?api_key=${apiKey}&language=vi-VN&page=1`;
+
+      if (appliedFilters.sort.length > 0) {
+        url += `&sort_by=${appliedFilters.sort[0]}`;
+      }
+
+      const years = appliedFilters.year.filter(y => y !== '');
+      if (years.length > 0) {
+        url += `&primary_release_year=${years.join(',')}`;
+      }
+      
+      const genres = appliedFilters.genres.filter(g => g !== '');
+      if (genres.length > 0) {
+        url += `&with_genres=${genres.join(',')}`;
+      }
 
       try {
         setLoading(true);
@@ -60,7 +91,7 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
     };
 
     fetchMovies();
-  }, [apiKey, baseUrl, endpoint, mediaType]);
+  }, [apiKey, baseUrl, mediaType, appliedFilters]);
 
   if (loading) {
     return <div className="loading-state">Đang tải phim...</div>;
@@ -83,31 +114,34 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
       </div>
       <div className="filters-container">
         <div className="filters-row">
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Sắp xếp theo</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Năm phát hành</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Trạng thái</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Thể loại</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <button className="filter-button">Lọc phim</button>
+          <FilterSelect
+            label="Sắp xếp theo"
+            options={sortOptions}
+            onSelect={(values) => setTempFilters({ ...tempFilters, sort: values })}
+            selectedValues={tempFilters.sort}
+          />
+          <FilterSelect
+            label="Năm phát hành"
+            options={yearOptions}
+            onSelect={(values) => setTempFilters({ ...tempFilters, year: values })}
+            selectedValues={tempFilters.year}
+          />
+          <FilterSelect
+            label="Thể loại"
+            options={genreOptions}
+            onSelect={(values) => setTempFilters({ ...tempFilters, genres: values })}
+            selectedValues={tempFilters.genres}
+          />
+          <button onClick={handleApplyFilters} className="filter-button">Lọc phim</button>
         </div>
       </div>
       <div className="movie-grid">
         {movies.map(movie => (
           <MovieCard 
-          key={movie.id} 
-          movie={movie} 
-          mediaType={mediaType} />
+            key={movie.id} 
+            movie={movie} 
+            mediaType={mediaType} 
+          />
         ))}
       </div>
     </div>

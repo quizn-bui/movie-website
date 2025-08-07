@@ -24,9 +24,9 @@
 .detail-content-wrapper {
   position: relative;
   z-index: 1;
-  max-width: 1200px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px;
 }
 
 .breadcrumbs {
@@ -67,7 +67,7 @@
 }
 
 .main-title {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 700;
   margin-bottom: 10px;
   line-height: 1.2;
@@ -110,10 +110,10 @@
 }
 
 .genre-tag {
-  background-color: #293a53;
+  background-color: #48587042;
   color: #ffffff;
   padding: 8px 15px;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
 }
@@ -270,7 +270,6 @@
   color: white;
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
   .main-title {
     font-size: 40px;
@@ -302,7 +301,7 @@
     width: 100%;
   }
   .poster-column {
-    order: -1; /* Move poster to top on small screens */
+    order: -1; 
     margin-bottom: 20px;
   }
   .detail-poster {

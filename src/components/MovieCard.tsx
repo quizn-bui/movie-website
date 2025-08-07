@@ -44,9 +44,6 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, mediaType }) => {
   }
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 8) return "#ffffffff"
-    if (rating >= 7) return "#ffffffff"
-    if (rating >= 6) return "#ffffffff"
     return "#ffffffff"
   }
 
@@ -82,7 +79,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, mediaType }) => {
           {movie.vote_average > 0 && (
             <div className="rating-badge">
               <span className="rating-text" style={{ color: getRatingColor(movie.vote_average) }}>
-                ★ {formatRating(movie.vote_average)}
+                ★ {formatRating(movie.vote_average)} 
               </span>
             </div>
           )}

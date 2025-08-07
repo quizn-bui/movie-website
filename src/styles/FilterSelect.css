@@ -1,0 +1,76 @@
+/* styles/FilterSelect.css */
+
+.filters-container__filter {
+  position: relative;
+  width: auto;
+}
+
+.filters-container__filter-header {
+  background-color: #1e293b;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.filters-container__filter-header:hover {
+  background-color: #334155;
+}
+
+.filters-container__filter-label {
+  white-space: nowrap;
+  color: #fff;
+}
+
+.filters-container__filter-arrow {
+  color: #6b7280;
+  transition: transform 0.2s ease-in-out;
+}
+
+.filters-container__filter-header.active .filters-container__filter-arrow {
+  transform: rotate(180deg);
+}
+
+.filters-container__filter-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 200px;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+  z-index: 10;
+  padding: 5px 0;
+}
+
+.filters-container__filter-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filters-container__filter-item:hover {
+  background-color: #334155;
+}
+
+.filters-container__filter-item.selected {
+  font-weight: bold;
+}
+
+.filter-item-label {
+  white-space: nowrap;
+}
+
+.selected-icon {
+  color: #10b981;
+  font-weight: bold;
+}

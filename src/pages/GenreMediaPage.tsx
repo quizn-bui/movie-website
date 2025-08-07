@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import MediaGridPage from './MediaGridPage';
+import MediaGridPage from '../pages/MediaGridPage';
 
 const GenreMediaPage: React.FC = () => {
   const { mediaType, genreId } = useParams<{ mediaType: string; genreId: string }>();

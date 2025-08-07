@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Menu, X, Globe, User } from "lucide-react";
+import { Search, Menu, X, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Header.css";
-import DesktopNavigation from "./DesktopNavigation"; 
+import DesktopNavigation from "./DesktopNavigation";
+import LanguageSelector from "./LanguageSelector";
+import AuthModal from "./AuthModal";
 
 interface MovieSearchResult {
   id: number;
@@ -14,22 +16,12 @@ interface MovieSearchResult {
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<MovieSearchResult[]>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-
-  const [selectedLanguage, setSelectedLanguage] = useState(() => {
-    return localStorage.getItem("appLanguage") || "vi";
-  });
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
-  const languageDropdownRef = useRef<HTMLDivElement>(null);
-  const authModalRef = useRef<HTMLDivElement>(null);
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -48,11 +40,11 @@ export default function Header() {
     }
 
     const debounceTimer = setTimeout(() => {
-      fetchSearchResults(searchQuery, selectedLanguage);
+      fetchSearchResults(searchQuery);
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchQuery, selectedLanguage]);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -62,31 +54,23 @@ export default function Header() {
       ) {
         setIsSearchFocused(false);
       }
+      const authButton = document.querySelector('.user-actions');
       if (
-        languageDropdownRef.current &&
-        !languageDropdownRef.current.contains(event.target as Node)
+        isAuthModalOpen &&
+        authButton &&
+        !authButton.contains(event.target as Node)
       ) {
-        setIsLanguageDropdownOpen(false);
-      }
-      if (
-        authModalRef.current &&
-        !authModalRef.current.contains(event.target as Node) &&
-        isAuthModalOpen
-      ) {
-        const userActionsButton = document.querySelector('.user-actions');
-        if (userActionsButton && userActionsButton.contains(event.target as Node)) {
-            return;
-        }
         setIsAuthModalOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isAuthModalOpen]); 
+  }, [isAuthModalOpen]);
 
-  const fetchSearchResults = async (query: string, languageCode: string) => {
+  const fetchSearchResults = async (query: string) => {
     const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
     const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
+    const languageCode = localStorage.getItem("appLanguage") || "vi";
 
     if (!API_KEY || !BASE_URL) return;
 
@@ -111,33 +95,9 @@ export default function Header() {
 
   const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && searchQuery.trim() !== "") {
-        navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
-        setSearchResults([]);
-        setIsSearchFocused(false);
-    }
-  };
-
-  const handleLanguageChange = (lang: string) => {
-    setSelectedLanguage(lang);
-    localStorage.setItem("appLanguage", lang);
-    setIsLanguageDropdownOpen(false);
-  };
-  
-  const handleLanguageClick = (e: React.MouseEvent, lang: string) => {
-    e.stopPropagation();
-    handleLanguageChange(lang);
-  };
-
-  const getLanguageDisplayName = (langCode: string) => {
-    switch (langCode) {
-      case "vi":
-        return "Tiếng Việt";
-      case "en":
-        return "English";
-      case "zh":
-        return "简体中文";
-      default:
-        return "Language";
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+      setSearchResults([]);
+      setIsSearchFocused(false);
     }
   };
 
@@ -154,12 +114,9 @@ export default function Header() {
               <h1 className="logo">MoviX</h1>
             </a>
           </div>
-
           <DesktopNavigation
             currentPath={location.pathname}
-            selectedLanguage={selectedLanguage}
           />
-
           <div className="search-container" ref={searchContainerRef}>
             <div className="search-wrapper">
               <Search className="search-icon" />
@@ -203,46 +160,13 @@ export default function Header() {
                   ))
                 ) : (
                   <div className="no-results">
-                    Không tìm thấy kết quả.{" "}
+                    Không tìm thấy kết quả.
                   </div>
                 )}
               </div>
             )}
           </div>
-
-          <div
-            className="web-language"
-            ref={languageDropdownRef}
-            onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
-          >
-            <Globe className="globe-icon" />
-            <span className="language-display-name">
-              {getLanguageDisplayName(selectedLanguage)}
-            </span>
-            {isLanguageDropdownOpen && (
-              <div className="language-dropdown">
-                <div
-                  className="language-option"
-                  onClick={(e) => handleLanguageClick(e, "vi")}
-                >
-                  Tiếng Việt
-                </div>
-                <div
-                  className="language-option"
-                  onClick={(e) => handleLanguageClick(e, "en")}
-                >
-                  English
-                </div>
-                <div
-                  className="language-option"
-                  onClick={(e) => handleLanguageClick(e, "zh")}
-                >
-                  简体中文
-                </div>
-              </div>
-            )}
-          </div>
-
+          <LanguageSelector />
           <div className="user-actions" onClick={toggleAuthModal}>
             <User className="user-icon" />
           </div>
@@ -254,45 +178,7 @@ export default function Header() {
           </button>
         </div>
       </div>
-
-      {isAuthModalOpen && (
-        <div className="auth-modal-overlay">
-          <div className="auth-modal-content" ref={authModalRef}>
-            <button className="auth-modal-close-btn" onClick={toggleAuthModal}>
-              <X size={24} />
-            </button>
-            <div className="auth-modal-header">
-              <button className="auth-modal-register-btn">ĐĂNG KÝ NGAY</button>
-            </div>
-            <div className="auth-modal-body">
-              <div className="input-group">
-                <label htmlFor="username">
-                  <User size={20} className="input-icon" /> Tài khoản
-                </label>
-                <input type="text" id="username" placeholder="Nhập tài khoản" />
-              </div>
-              <div className="input-group">
-                <label htmlFor="password">
-                  <span className="icon-wrapper"><i className="fa-solid fa-lock"></i></span> Mật khẩu
-                </label>
-                <input type="password" id="password" placeholder="Nhập mật khẩu" />
-                <span className="password-toggle"><i className="fa-solid fa-eye-slash"></i></span>
-              </div>
-              <a href="#" className="forgot-password">Quên mật khẩu?</a>
-              <button className="auth-modal-login-btn">Đăng nhập</button>
-              <div className="or-connect">hoặc kết nối tài khoản</div>
-              <div className="social-login">
-                <button className="social-btn google">
-                  <img src="https://img.icons8.com/color/48/000000/google-plus.png" alt="Google icon"/>
-                </button>
-                <button className="social-btn other">
-                  <img src="https://img.icons8.com/ios-filled/50/000000/grid.png" alt="Other social icon"/>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <AuthModal isOpen={isAuthModalOpen} onClose={toggleAuthModal} />
     </header>
   );
 }

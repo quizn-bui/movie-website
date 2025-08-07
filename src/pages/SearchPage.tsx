@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Search } from "lucide-react"
-import MovieCard from "./MovieCard"
+import MovieCard from "../components/MovieCard"
 import "../styles/SearchPage.css"
 
 export interface Movie {
