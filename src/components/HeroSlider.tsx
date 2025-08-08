@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
+import { LanguageContext } from "../context/LanguageContext";
 import "../styles/HeroSlider.css";
 
 import "swiper/css";
@@ -19,6 +20,7 @@ interface Movie {
   genre_ids: number[];
   runtime?: number;
   genres: Genre[]; 
+  certification?: string;
 }
 
 interface Genre {
@@ -27,6 +29,12 @@ interface Genre {
 }
 
 export default function HeroSlider() {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("HeroSlider must be used within a LanguageProvider");
+  }
+  const { selectedLanguage, t } = context;
+
   const [movies, setMovies] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]); 
   const [loading, setLoading] = useState(true);
@@ -34,16 +42,21 @@ export default function HeroSlider() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedLanguage]);
 
   const fetchData = async () => {
     try {
       const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
       const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
+      const apiLanguageCode = {
+        vi: "vi-VN",
+        en: "en-US",
+        zh: "zh-CN",
+      }[selectedLanguage] || "en-US";
 
       const [moviesResponse, genresResponse] = await Promise.all([
-        fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=1&language=vi-vn`),
-        fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}&language=vi-VN`), 
+        fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=1&language=${apiLanguageCode}`),
+        fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}&language=${apiLanguageCode}`), 
       ]);
 
       const moviesData = await moviesResponse.json();
@@ -53,14 +66,27 @@ export default function HeroSlider() {
       const moviesWithDetails = await Promise.all(
         popularMovies.map(async (movie: Movie) => {
           const movieDetailsResponse = await fetch(
-            `${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}&language=vi-VN`
+            `${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}&language=${apiLanguageCode}`
           );
           const movieDetailsData = await movieDetailsResponse.json();
+
+          const releaseDatesResponse = await fetch(
+          `${BASE_URL}/movie/${movie.id}/release_dates?api_key=${API_KEY}`
+        );
+        const releaseDatesData = await releaseDatesResponse.json();
+
+        const vnRating = releaseDatesData.results.find(
+          (release: any) => release.iso_3166_1 === "VN"
+        );
+        const certification = vnRating?.release_dates[0]?.certification || "";
+
+          
 
           return {
             ...movie,
             runtime: movieDetailsData.runtime,
             genres: movieDetailsData.genres, 
+            certification: certification,
           };
         })
       );
@@ -91,6 +117,7 @@ export default function HeroSlider() {
     return (
       <div className="loading-container">
         <div className="loading-overlay" />
+        <p className="loading-text">{t("loading_text")}</p>
       </div>
     );
   }
@@ -138,6 +165,10 @@ export default function HeroSlider() {
                       <div className="movie-badges">
                         <i className="fa-solid fa-star"></i>
                         <span className="rating-badge-slide">{movie.vote_average.toFixed(1)}</span>
+                        {movie.certification && (
+                          <span className="badge age">{movie.certification}</span>
+                        )}
+                        <span className="badge hd">HD</span>
                       </div>
                     </div>
                     <div className="genres-slide">
@@ -152,13 +183,13 @@ export default function HeroSlider() {
                   <div className="view-action">
                     <div className="actions">
                       <button className="watch-btn" onClick={() => handleWatchNowClick(movie.id)}>
-                        Watch Now
+                        {t("watch_now_button")}
                         <i className="fa-solid fa-circle-play"></i>
                       </button>
 
                       <button className="watch-later-btn">
-                        Watch Later
-                        <i className="fa-solid fa-plus"></i>
+                        {t("watch_later_button")}
+                        <i className="fa-solid fa-clock"></i>
                       </button>
                     </div>
                   </div>

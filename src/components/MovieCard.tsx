@@ -89,6 +89,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, mediaType }) => {
           <h3 className="movie-title">{title}</h3>
           <div className="movie-meta">
             {releaseDate && <span className="movie-year">{getYear(releaseDate)}</span>}
+             <span className="badge-hd-card">HD</span>
           </div>
         </div>
       </div>

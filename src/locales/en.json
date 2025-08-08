@@ -1,0 +1,50 @@
+{
+  "header_movies": "Movies",
+  "header_tv_shows": "TV Shows",
+  "header_series": "Series",
+  "header_genres": "Genres",
+  "search_placeholder": "Search movie...",
+  "no_results": "No results found.",
+  "homepage": "Home",
+  "loading_genres": "Loading genres...",
+  "language_vietnamese": "Vietnamese",
+  "language_english": "English",
+  "language_chinese": "Chinese",
+
+
+  "login_button": "Login",
+  "register_button": "REGISTER NOW",
+  "username_label": "Username",
+  "username_placeholder": "Enter username",
+  "password_label": "Password",
+  "password_placeholder": "Enter password",
+  "forgot_password_link": "Forgot password?",
+  "or_connect_text": "or connect account",
+
+
+  "watch_now_button": "Watch Now",
+  "watch_later_button": "Watch Later",
+  "loading_text": "Loading data...",
+
+
+  "loading_movies": "Loading movies...",
+  "error_message_movies_load": "Failed to load movies. Please try again later.",
+  "retry_button": "Retry",
+  "movie_series_info": "Movie",
+  "tv_series_info": "TV Series",
+
+  
+  "error_message": "Error",
+  "no_movies_found": "No movies found",
+  "view_all_button": "View all",
+
+
+   "recently_updated_title": "Recently Updated",
+  "trending_title": "Trending",
+  "new_release_movies_title": "New Release - Movies",
+  "new_release_series_title": "New Release - Series",
+  "recommended_title": "Recommended",
+  
+
+  "footer_description": "MoviX - Movie Universe - A high-quality free online movie streaming platform with Vietsub, dubbing, and full HD. A huge collection of new movies, cinema hits, TV series, and films from various countries like Vietnam, Korea, China, Thailand, Japan, Europe, and America, covering diverse genres. Discover the best 2025 online movie platform with 4K quality!"
+}

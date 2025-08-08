@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { LanguageContext } from "../context/LanguageContext";
 import { Search, Menu, X, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Header.css";
@@ -14,6 +15,11 @@ interface MovieSearchResult {
 }
 
 export default function Header() {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("Header must be used within a LanguageProvider");
+  }
+  const { selectedLanguage, t } = context;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,7 +50,7 @@ export default function Header() {
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchQuery]);
+  }, [searchQuery, selectedLanguage]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -54,6 +60,13 @@ export default function Header() {
       ) {
         setIsSearchFocused(false);
       }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
       const authButton = document.querySelector('.user-actions');
       if (
         isAuthModalOpen &&
@@ -70,15 +83,14 @@ export default function Header() {
   const fetchSearchResults = async (query: string) => {
     const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
     const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
-    const languageCode = localStorage.getItem("appLanguage") || "vi";
-
-    if (!API_KEY || !BASE_URL) return;
 
     const apiLanguageCode = {
       vi: "vi-VN",
       en: "en-US",
       zh: "zh-CN",
-    }[languageCode];
+    }[selectedLanguage];
+
+    if (!API_KEY || !BASE_URL) return;
 
     try {
       const response = await fetch(
@@ -122,7 +134,7 @@ export default function Header() {
               <Search className="search-icon" />
               <input
                 type="text"
-                placeholder="Tìm kiếm phim..."
+                placeholder={t("search_placeholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
@@ -160,7 +172,7 @@ export default function Header() {
                   ))
                 ) : (
                   <div className="no-results">
-                    Không tìm thấy kết quả.
+                    {t("no_results")}
                   </div>
                 )}
               </div>

@@ -1,0 +1,49 @@
+{
+  "header_movies": "Phim lẻ",
+  "header_tv_shows": "TV Shows",
+  "header_series": "Phim bộ",
+  "header_genres": "Thể loại",
+  "search_placeholder": "Tìm kiếm phim...",
+  "no_results": "Không tìm thấy kết quả.",
+  "homepage": "Trang chủ",
+  "loading_genres": "Đang tải thể loại...",
+  "language_vietnamese": "Tiếng Việt",
+  "language_english": "English",
+  "language_chinese": "简体中文",
+
+
+  "login_button": "Đăng nhập",
+  "register_button": "ĐĂNG KÝ NGAY",
+  "username_label": "Tài khoản",
+  "username_placeholder": "Nhập tài khoản",
+  "password_label": "Mật khẩu",
+  "password_placeholder": "Nhập mật khẩu",
+  "forgot_password_link": "Quên mật khẩu?",
+  "or_connect_text": "hoặc kết nối tài khoản",
+  "watch_now_button": "Xem Ngay",
+  "watch_later_button": "Xem Sau",
+  "loading_text": "Đang tải dữ liệu...",
+
+
+  "loading_movies": "Đang tải phim...",
+  "error_message_movies_load": "Không thể tải phim. Vui lòng thử lại sau.",
+  "retry_button": "Thử lại",
+  "movie_series_info": "Phim lẻ",
+  "tv_series_info": "Phim bộ",
+
+  "error_message": "Lỗi",
+  "no_movies_found": "Không tìm thấy phim nào",
+  "view_all_button": "Xem tất cả",
+
+
+  "recently_updated_title": "Mới Cập Nhật",
+  "trending_title": "Thịnh Hành",
+  "new_release_movies_title": "Phim Mới Phát Hành - Phim Lẻ",
+  "new_release_series_title": "Phim Mới Phát Hành - Phim Bộ",
+  "recommended_title": "Được Đề Xuất",
+
+
+  "footer_description": "MoviX - Vũ trụ phim - Trang xem phim online chất lượng cao miễn phí Vietsub, thuyết minh, lồng tiếng full HD. Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc, Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ… đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay nhất 2025 chất lượng 4K!"
+  
+}
+

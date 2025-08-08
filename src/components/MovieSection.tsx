@@ -1,9 +1,10 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import MovieCard from "./MovieCard";
 import "../styles/MovieSection.css";
+import { LanguageContext } from "../context/LanguageContext";
 
 interface Movie {
   id: number;
@@ -30,6 +31,12 @@ const MovieSection: React.FC<MovieSectionProps> = ({
   showViewAll = true,
   onViewAll,
 }) => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("MovieSection must be used within a LanguageProvider");
+  }
+  const { selectedLanguage, t } = context;
+
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,8 +53,14 @@ const MovieSection: React.FC<MovieSectionProps> = ({
         if (!apiKey || !baseUrl) {
           throw new Error("Missing API configuration");
         }
+        
+        const apiLanguageCode = {
+          vi: "vi-VN",
+          en: "en-US",
+          zh: "zh-CN",
+        }[selectedLanguage] || "en-US";
 
-        const url = `${baseUrl}/${endpoint}?api_key=${apiKey}&language=vi-VN&page=1`;
+        const url = `${baseUrl}/${endpoint}?api_key=${apiKey}&language=${apiLanguageCode}&page=1`;
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -58,29 +71,28 @@ const MovieSection: React.FC<MovieSectionProps> = ({
         
         const transformedMovies = data.results?.slice(0, 20).map((item: any) => ({
           ...item,
-
           media_type: endpoint.includes("movie") ? "movie" : "tv"
         }));
 
         setMovies(transformedMovies || []);
       } catch (error) {
         console.error("Error fetching movies:", error);
-        setError(error instanceof Error ? error.message : "Unknown error");
+        setError(t("error_message_movies_load"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchMovies();
-  }, [endpoint]);
+  }, [endpoint, selectedLanguage, t]);
 
   if (loading) {
     return (
       <div className="movie-section">
         <div className="section-header">
-          <h2 className="section-title">{title}</h2>
+          <h2 className="section-title">{t(title)}</h2>
         </div>
-        <div className="loading">Loading movies...</div>
+        <div className="loading">{t("loading_movies")}</div>
       </div>
     );
   }
@@ -89,9 +101,9 @@ const MovieSection: React.FC<MovieSectionProps> = ({
     return (
       <div className="movie-section">
         <div className="section-header">
-          <h2 className="section-title">{title}</h2>
+          <h2 className="section-title">{t(title)}</h2>
         </div>
-        <div className="error">Error: {error}</div>
+        <div className="error">{t("error_message")}: {error}</div>
       </div>
     );
   }
@@ -100,9 +112,9 @@ const MovieSection: React.FC<MovieSectionProps> = ({
     return (
       <div className="movie-section">
         <div className="section-header">
-          <h2 className="section-title">{title}</h2>
+          <h2 className="section-title">{t(title)}</h2>
         </div>
-        <div className="no-movies">No movies found</div>
+        <div className="no-movies">{t("no_movies_found")}</div>
       </div>
     );
   }
@@ -110,10 +122,10 @@ const MovieSection: React.FC<MovieSectionProps> = ({
   return (
     <div className="movie-section">
       <div className="section-header">
-        <h2 className="section-title">{title}</h2>
+        <h2 className="section-title">{t(title)}</h2>
         {showViewAll && (
           <button className="view-all-btn" onClick={onViewAll}>
-            View all →
+            {t("view_all_button")} →
           </button>
         )}
       </div>

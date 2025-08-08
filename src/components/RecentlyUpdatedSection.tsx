@@ -1,10 +1,11 @@
 "use client"
 
 import type React from "react"
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useContext } from "react"
 import { Link } from "react-router-dom"
 import RecentlyUpdatedCard from "./RecentlyUpdatedCard"
 import "../styles/RecentlyUpdatedSection.css"
+import { LanguageContext } from "../context/LanguageContext"
 
 interface Movie {
   id: number
@@ -16,11 +17,17 @@ interface Movie {
 }
 
 interface RecentlyUpdatedSectionProps {
-  title: string;
-  endpoint: string;
+  title: string
+  endpoint: string
 }
 
 const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, endpoint }) => {
+  const context = useContext(LanguageContext)
+  if (!context) {
+    throw new Error("RecentlyUpdatedSection must be used within a LanguageProvider")
+  }
+  const { selectedLanguage, t } = context
+
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
@@ -42,7 +49,7 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
   }
 
   const getSeriesInfo = (item: any): string => {
-    return item.media_type === "movie" ? "movie" : "TV series"
+    return t(item.media_type === "movie" ? "movie_series_info" : "tv_series_info")
   }
 
   const formatDate = (dateString: string | undefined): string => {
@@ -54,7 +61,12 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
       if (isNaN(date.getTime())) {
         return "N/A"
       }
-      return new Intl.DateTimeFormat("en-US", {
+      const apiLanguageCode = {
+        vi: "vi-VN",
+        en: "en-US",
+        zh: "zh-CN",
+      }[selectedLanguage] || "en-US";
+      return new Intl.DateTimeFormat(apiLanguageCode, {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -74,9 +86,15 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
         if (!TMDB_API_KEY || !TMDB_BASE_URL) {
           throw new Error("Missing API configuration.")
         }
+        
+        const apiLanguageCode = {
+          vi: "vi-VN",
+          en: "en-US",
+          zh: "zh-CN",
+        }[selectedLanguage] || "en-US";
 
         const response = await fetch(
-          `${TMDB_BASE_URL}/${endpoint}?api_key=${TMDB_API_KEY}&language=vi-VN`
+          `${TMDB_BASE_URL}/${endpoint}?api_key=${TMDB_API_KEY}&language=${apiLanguageCode}`
         )
 
         if (!response.ok) {
@@ -100,7 +118,7 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
 
         setMovies(transformedMovies)
       } catch (err) {
-        setError("Failed to load movies. Please try again later.")
+        setError(t("error_message_movies_load"))
         console.error("Error fetching movies:", err)
       } finally {
         setLoading(false)
@@ -108,7 +126,7 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
     }
 
     fetchMovies()
-  }, [endpoint, TMDB_API_KEY, TMDB_BASE_URL])
+  }, [endpoint, TMDB_API_KEY, TMDB_BASE_URL, selectedLanguage, t])
 
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     if (!scrollContainerRef.current) return
@@ -143,10 +161,10 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
     return (
       <section className="recently-updated-section">
         <div className="section-container">
-          <h2 className="section-title">{title}</h2>
+          <h2 className="section-title">{t(title)}</h2>
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p className="loading-text">Loading movies...</p>
+            <p className="loading-text">{t("loading_movies")}</p>
           </div>
         </div>
       </section>
@@ -157,11 +175,11 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
     return (
       <section className="recently-updated-section">
         <div className="section-container">
-          <h2 className="section-title">{title}</h2>
+          <h2 className="section-title">{t(title)}</h2>
           <div className="error-container">
             <p className="error-text">{error}</p>
             <button className="retry-button" onClick={() => window.location.reload()}>
-              Retry
+              {t("retry_button")}
             </button>
           </div>
         </div>
@@ -172,7 +190,7 @@ const RecentlyUpdatedSection: React.FC<RecentlyUpdatedSectionProps> = ({ title, 
   return (
     <section className="recently-updated-section">
       <div className="section-container">
-        <h2 className="section-title">{title}</h2>
+        <h2 className="section-title">{t(title)}</h2>
         <div
           className={`flick-swiper-container ${isDragging ? "dragging" : ""}`}
           ref={scrollContainerRef}

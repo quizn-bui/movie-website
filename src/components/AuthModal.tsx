@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { User, X, Lock, Eye, EyeOff } from "lucide-react";
+import { LanguageContext } from "../context/LanguageContext";
 import "../styles/AuthModal.css";
 
 interface AuthModalProps {
@@ -8,6 +9,12 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("AuthModal must be used within a LanguageProvider");
+  }
+  const { t } = context;
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,30 +34,30 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <X size={24} />
         </button>
         <div className="auth-modal-header">
-          <button className="auth-modal-register-btn">ĐĂNG KÝ NGAY</button>
+          <button className="auth-modal-register-btn">{t("register_button")}</button>
         </div>
         <div className="auth-modal-body">
           <div className="input-group">
-            <label htmlFor="username">Tài khoản</label>
+            <label htmlFor="username">{t("username_label")}</label>
             <div className="input-wrapper">
               <User size={20} className="input-icon" />
               <input
                 type="text"
                 id="username"
-                placeholder="Nhập tài khoản"
+                placeholder={t("username_placeholder")}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
           </div>
           <div className="input-group">
-            <label htmlFor="password">Mật khẩu</label>
+            <label htmlFor="password">{t("password_label")}</label>
             <div className="input-wrapper">
               <Lock size={20} className="input-icon" />
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                placeholder="Nhập mật khẩu"
+                placeholder={t("password_placeholder")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -59,9 +66,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </span>
             </div>
           </div>
-          <a href="#" className="forgot-password">Quên mật khẩu?</a>
-          <button className="auth-modal-login-btn">Đăng nhập</button>
-          <div className="or-connect">hoặc kết nối tài khoản</div>
+          <a href="#" className="forgot-password">{t("forgot_password_link")}</a>
+          <button className="auth-modal-login-btn">{t("login_button")}</button>
+          <div className="or-connect">{t("or_connect_text")}</div>
           <div className="social-login">
             <button className="social-btn google">
               <img src="https://img.icons8.com/color/48/000000/google-plus.png" alt="Google icon" />

@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Header from "../components/Header";
 import HeroSlider from "../components/HeroSlider";
 import MovieSection from "../components/MovieSection";
 import ViewAllPage from "./ViewAllPage";
 import RecentlyUpdatedSection from "../components/RecentlyUpdatedSection";
+import { LanguageContext } from "../context/LanguageContext";
 import "../App.css";
 
 export default function HomePage() {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("HomePage must be used within a LanguageProvider");
+  }
+  const { t } = context;
+
   const [currentView, setCurrentView] = useState<{
     type: "home" | "viewAll"
     title?: string
@@ -40,27 +47,27 @@ export default function HomePage() {
       <HeroSlider />
       <div className="content">
         <RecentlyUpdatedSection 
-            title="Recently Updated" 
+            title={t("recently_updated_title")} 
             endpoint="movie/now_playing"/>
         <MovieSection 
-            title="Trending" 
+            title={t("trending_title")} 
             endpoint="trending/movie/week" 
-            onViewAll={() => handleViewAll("Trending", "trending/movie/week")}
+            onViewAll={() => handleViewAll(t("trending_title"), "trending/movie/week")}
         />
         <MovieSection 
-            title="New Release - Movies" 
+            title={t("new_release_movies_title")} 
             endpoint="movie/popular" 
-            onViewAll={() => handleViewAll("New Release - Movies", "movie/popular")}
+            onViewAll={() => handleViewAll(t("new_release_movies_title"), "movie/popular")}
         /> 
         <MovieSection 
-            title="New Release - Series" 
+            title={t("new_release_series_title")} 
             endpoint="tv/popular" 
-            onViewAll={() => handleViewAll("New Release - Series", "tv/popular")}
+            onViewAll={() => handleViewAll(t("new_release_series_title"), "tv/popular")}
         />
         <MovieSection 
-            title="Recommended" 
+            title={t("recommended_title")} 
             endpoint="movie/top_rated" 
-            onViewAll={() => handleViewAll("Recommended", "movie/top_rated")}
+            onViewAll={() => handleViewAll(t("recommended_title"), "movie/top_rated")}
         />
       </div>
     </div>

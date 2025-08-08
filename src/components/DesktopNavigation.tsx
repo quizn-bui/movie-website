@@ -17,7 +17,7 @@ export default function DesktopNavigation({ currentPath }: DesktopNavigationProp
   if (!languageContext) {
     throw new Error("DesktopNavigation must be used within a LanguageProvider");
   }
-  const { selectedLanguage } = languageContext;
+  const { selectedLanguage, t } = languageContext;
 
   const [isGenreDropdownOpen, setIsGenreDropdownOpen] = useState(false);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -86,20 +86,20 @@ export default function DesktopNavigation({ currentPath }: DesktopNavigationProp
     <>
       <nav className="desktop-nav">
         <Link to="/" className={`nav-link ${currentPath === '/' ? 'nav-link-active' : ''}`}>
-          Trang chủ
+          {t("homepage")}
         </Link>
         <Link to="/series" className={`nav-link ${currentPath === '/series' ? 'nav-link-active' : ''}`}>
-          Phim bộ
+          {t("header_series")}
         </Link>
         <Link to="/movies" className={`nav-link ${currentPath === '/movies' ? 'nav-link-active' : ''}`}>
-          Phim lẻ
+          {t("header_movies")}
         </Link>
         <Link to="/tv-shows" className={`nav-link ${currentPath === '/tv-shows' ? 'nav-link-active' : ''}`}>
-          TV Shows
+          {t("header_tv_shows")}
         </Link>
         <div className="genre-dropdown-container" ref={genreDropdownRef}>
           <a href="#" className="nav-link" onClick={toggleGenreDropdown} ref={genreNavLinkRef}>
-            Thể loại
+            {t("header_genres")}
             <span className={`genre-dropdown-arrow ${isGenreDropdownOpen ? 'open' : ''}`}></span>
           </a>
           {isGenreDropdownOpen && (
@@ -118,7 +118,7 @@ export default function DesktopNavigation({ currentPath }: DesktopNavigationProp
                     </Link>
                   ))
                 ) : (
-                  <div className="no-genres">Đang tải thể loại...</div>
+                  <div className="no-genres">{t("loading_genres")}</div>
                 )}
               </div>
             </div>

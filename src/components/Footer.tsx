@@ -1,6 +1,13 @@
+import { useContext } from "react";
 import "../styles/Footer.css";
+import { LanguageContext } from "../context/LanguageContext";
 
 export default function Footer() {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("Footer must be used within a LanguageProvider");
+  }
+  const { t } = context;
 
   return (
     <footer className="footer-container">
@@ -9,11 +16,11 @@ export default function Footer() {
           <h1 className="footer-logo">MoviX</h1>
         </a>
         <p className="footer-description">
-          MoviX – Vũ trụ phim - Trang xem phim online chất lượng cao miễn phí Vietsub, thuyết minh, lồng tiếng full HD. Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc, Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ… đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay nhất 2025 chất lượng 4K!
+          {t("footer_description")}
         </p>
 
         <p className="footer-copyright">
-          © 2025 MoviX
+          © {new Date().getFullYear()} MoviX
         </p>
       </div>
     </footer>

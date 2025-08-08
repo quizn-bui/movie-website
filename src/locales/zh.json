@@ -1,0 +1,47 @@
+{
+  "header_movies": "电影",
+  "header_tv_shows": "电视剧",
+  "header_series": "连续剧",
+  "header_genres": "类型",
+  "search_placeholder": "搜索电影...",
+  "no_results": "未找到结果。",
+  "homepage": "首页",
+  "loading_genres": "正在加载类型...",
+  "language_vietnamese": "越南语",
+  "language_english": "英语",
+  "language_chinese": "简体中文",
+
+
+  "login_button": "登录",
+  "register_button": "立即注册",
+  "username_label": "用户名",
+  "username_placeholder": "输入用户名",
+  "password_label": "密码",
+  "password_placeholder": "输入密码",
+  "forgot_password_link": "忘记密码？",
+  "or_connect_text": "或使用第三方账号登录",
+  "watch_now_button": "立即观看",
+  "watch_later_button": "稍后观看",
+  "loading_text": "正在加载数据...",
+
+
+  "loading_movies": "正在加载电影...",
+  "error_message_movies_load": "无法加载电影。请稍后再试。",
+  "retry_button": "重试",
+  "movie_series_info": "电影",
+  "tv_series_info": "电视剧",
+
+
+  "error_message": "错误",
+  "no_movies_found": "未找到任何电影",
+  "view_all_button": "查看全部",
+
+
+  "recently_updated_title": "最近更新",
+  "trending_title": "热门",
+  "new_release_movies_title": "新片上映 - 电影",
+  "new_release_series_title": "新片上映 - 剧集",
+  "recommended_title": "推荐",
+
+  "footer_description": "MoviX - 电影宇宙 - 一个高质量的免费在线电影平台, 提供Vietsub、配音和全高清画质。海量新片、影院大片、电视剧、电影,来自越南、韩国、中国、泰国、日本、欧美等多个国家，类型丰富多样。探索2025年最佳4K画质在线电影平台!"
+}
