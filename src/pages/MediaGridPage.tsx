@@ -1,9 +1,12 @@
 "use client"
 
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import '../styles/MediaGridPage.css'
 import MovieCard from '../components/MovieCard'
+import FilterSelect from "../components/FilterSelect"
+import { sortOptions, yearOptions, genreOptions } from "../data/filterOptions"
+import { LanguageContext } from "../context/LanguageContext"
 
 export interface Movie {
   id: number;
@@ -23,18 +26,39 @@ interface MediaGridPageProps {
 }
 
 const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
+  const languageContext = useContext(LanguageContext);
+  if (!languageContext) {
+    throw new Error("MediaGridPage must be used within a LanguageProvider");
+  }
+  const { selectedLanguage, t } = languageContext;
+
   const [media, setMedia] = useState<Movie[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const mediaType = endpoint.includes('movie') ? 'movie' : 'tv';
 
-  useEffect(() => {
-    setMedia([]);
+  const mediaType = endpoint.includes('movie') ? 'movie' : 'tv';
+  
+  const [appliedFilters, setAppliedFilters] = useState({
+    sort: ['popularity.desc'],
+    year: [''],
+    genres: [''],
+  });
+  
+  const [tempFilters, setTempFilters] = useState({
+    sort: ['popularity.desc'],
+    year: [''],
+    genres: [''],
+  });
+  
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(tempFilters);
     setPage(1);
-    setTotalPages(1);
-  }, [endpoint]);
+    setOpenDropdown(null);
+  };
 
   const fetchMedia = useCallback(async () => {
     setLoading(true);
@@ -42,42 +66,63 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
     const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
 
     if (!API_KEY || !BASE_URL) {
-      console.error("TMDB API Key or Base URL is not defined.");
+      console.error(t("api_key_or_base_url_missing"));
       setLoading(false);
       return;
     }
-
+    
+    const apiLanguageCode = {
+      vi: "vi-VN",
+      en: "en-US",
+      zh: "zh-CN",
+    }[selectedLanguage] || "en-US";
+    
     let apiUrl = `${BASE_URL}/${endpoint}`;
-    const separator = endpoint.includes('?') ? '&' : '?';
-    apiUrl = `${apiUrl}${separator}api_key=${API_KEY}&language=vi-VN&page=${page}`;
+
+    apiUrl += `${endpoint.includes('?') ? '&' : '?'}api_key=${API_KEY}&language=${apiLanguageCode}&page=${page}`;
+
+    const sortValue = appliedFilters.sort.filter(s => s !== '');
+    if (sortValue.length > 0) {
+      apiUrl += `&sort_by=${sortValue[0]}`;
+    }
+    
+    const years = appliedFilters.year.filter(y => y !== '');
+    if (years.length > 0) {
+      apiUrl += `&primary_release_year=${years.join(',')}`;
+    }
+    
+    const genres = appliedFilters.genres.filter(g => g !== '');
+    if (genres.length > 0) {
+      apiUrl += `&with_genres=${genres.join(',')}`;
+    }
 
     try {
       const response = await fetch(apiUrl);
       if (!response.ok) {
-        throw new Error(`Không thể lấy dữ liệu từ endpoint ${endpoint}, trang ${page}. Status: ${response.status}`);
+        throw new Error(`${t("fetch_data_error", { endpoint, page })} Status: ${response.status}`);
       }
       const data = await response.json();
       
       const moviesWithMediaType = data.results.map((item: any) => ({
         ...item,
-        media_type: endpoint.includes('movie') ? 'movie' : 'tv'
+        media_type: mediaType
       }));
 
       setMedia(moviesWithMediaType || []);
       setTotalPages(data.total_pages);
     } catch (error) {
-      console.error("Lỗi khi lấy danh sách media:", error);
+      console.error(t("fetch_media_list_error"), error);
       setMedia([]);
       setTotalPages(1);
     } finally {
       setLoading(false);
     }
-  }, [page, endpoint]);
+  }, [page, endpoint, mediaType, appliedFilters, selectedLanguage, t]);
 
   useEffect(() => {
     fetchMedia();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [page, endpoint, fetchMedia]);
+  }, [page, endpoint, fetchMedia, appliedFilters]);
 
   const handleBack = () => {
     navigate("/");
@@ -104,7 +149,7 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
     return (
       <div className="pagination">
         {page > 1 && (
-          <button className="page-nav" onClick={() => setPage(page - 1)}>&lt; Trước</button>
+          <button className="page-nav" onClick={() => setPage(page - 1)}>&lt; {t("previous_page")}</button>
         )}
         {startPage > 1 && (
           <>
@@ -120,7 +165,7 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
           </>
         )}
         {page < totalPages && (
-          <button className="page-nav" onClick={() => setPage(page + 1)}>Sau &gt;</button>
+          <button className="page-nav" onClick={() => setPage(page + 1)}>{t("next_page")} &gt;</button>
         )}
       </div>
     );
@@ -129,36 +174,45 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
   return (
     <div className="media-grid-page">
       <button onClick={handleBack} className="back-button">
-        Quay lại
+        ← {t("back_button")}
       </button>
 
       <h1 className="page-title">{title}</h1>
       <div className="breadcrumb">
-        Trang chủ / {title}
+        {t("homepage")} / {title}
       </div>
       <div className="filters-container">
         <div className="filters-row">
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Sắp xếp theo</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Năm phát hành</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Trạng thái</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Thể loại</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <button className="filter-button">Lọc phim</button>
+          <FilterSelect
+            label={t("sort_by_label")}
+            options={sortOptions}
+            onSelect={(values) => setTempFilters({ ...tempFilters, sort: values })}
+            selectedValues={tempFilters.sort}
+            isOpen={openDropdown === 'sort'}
+            onToggle={() => setOpenDropdown(openDropdown === 'sort' ? null : 'sort')}
+          />
+          <FilterSelect
+            label={t("release_year_label")}
+            options={yearOptions}
+            onSelect={(values) => setTempFilters({ ...tempFilters, year: values })}
+            selectedValues={tempFilters.year}
+            isOpen={openDropdown === 'year'}
+            onToggle={() => setOpenDropdown(openDropdown === 'year' ? null : 'year')}
+          />
+          <FilterSelect
+            label={t("genre_label")}
+            options={genreOptions}
+            onSelect={(values) => setTempFilters({ ...tempFilters, genres: values })}
+            selectedValues={tempFilters.genres}
+            isOpen={openDropdown === 'genres'}
+            onToggle={() => setOpenDropdown(openDropdown === 'genres' ? null : 'genres')}
+          />
+          <button onClick={handleApplyFilters} className="filter-button">{t("filter_movies_button")}</button>
         </div>
       </div>
+      
       {loading ? (
-        <p className="loading-initial">Đang tải...</p>
+        <p className="loading-initial">{t("loading_initial")}</p>
       ) : (
         <div className="media-grid">
           {media.length > 0 ? (
@@ -169,7 +223,7 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
                 mediaType={mediaType} />
             ))
           ) : (
-            <p className="loading-initial">Không có dữ liệu.</p>
+            <p className="loading-initial">{t("no_data")}</p>
           )}
         </div>
       )}

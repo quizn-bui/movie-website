@@ -144,6 +144,24 @@
   font-weight: 400;
 }
 
+.movie-genres {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.genre-tag-card {
+  font-weight: 300;
+  border: solid 1px red;
+  background-color: transparent;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #fff;
+  white-space: nowrap;
+}
+
 .badge-hd-card {
   font-size: 12px;
   border: 1px solid red;

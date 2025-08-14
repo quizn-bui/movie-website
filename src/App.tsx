@@ -6,6 +6,7 @@ import MediaGridPage from "./pages/MediaGridPage";
 import GenreMediaPage from "./pages/GenreMediaPage";
 import SearchPage from "./pages/SearchPage"; 
 import DetailPage from "./pages/MovieDetail";
+import CountryPage from "./pages/CountryPage";
 import "./App.css";
 
 export default function App() {
@@ -15,10 +16,10 @@ export default function App() {
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/series" element={<MediaGridPage title="Phim bộ" endpoint="tv/popular" />} />
           <Route path="/movies" element={<MediaGridPage title="Phim lẻ" endpoint="movie/popular" />} />
           <Route path="/tv-shows" element={<MediaGridPage title="TV Shows" endpoint="tv/top_rated" />} />
           <Route path="/genre/:mediaType/:genreId" element={<GenreMediaPage />} />
+           <Route path="/country/:mediaType/:countryCode" element={<CountryPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/:mediaType/:id" element={<DetailPage />} />
         </Routes>

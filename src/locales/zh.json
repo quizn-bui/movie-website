@@ -1,12 +1,15 @@
 {
+  "homepage": "首页",
   "header_movies": "电影",
-  "header_tv_shows": "电视剧",
-  "header_series": "连续剧",
+  "header_tv_shows": "电视节目",
   "header_genres": "类型",
+  "header_countries": "国家",
+  "loading_genres": "正在加载类型...",
+  "loading_countries": "正在加载国家...",
+  "api_key_or_base_url_missing": "TMDB API密钥或基础URL未配置。",
+  "http_error_status": "HTTP错误! 状态",
   "search_placeholder": "搜索电影...",
   "no_results": "未找到结果。",
-  "homepage": "首页",
-  "loading_genres": "正在加载类型...",
   "language_vietnamese": "越南语",
   "language_english": "英语",
   "language_chinese": "简体中文",
@@ -42,6 +45,70 @@
   "new_release_movies_title": "新片上映 - 电影",
   "new_release_series_title": "新片上映 - 剧集",
   "recommended_title": "推荐",
+
+
+  "missing_api_config": "API配置缺失。",
+  "http_error_message": "HTTP错误",
+  "unknown_error": "发生未知错误。",
+  "back_button": "返回",
+  "homepage_title": "首页",
+  "sort_by_label": "排序",
+  "release_year_label": "发行年份",
+  "genre_label": "类型",
+  "filter_movies_button": "筛选电影",
+  "loading_more": "正在加载更多...",
+  "load_more_button": "加载更多",
+
+
+
+  "search_results_for": "搜索结果",
+  "movies_tab": "电影",
+  "actors_tab": "演员",
+  "loading_results": "正在加载结果...",
+  "no_results_found": "未找到任何结果。",
+  "previous_page": "上一页",
+  "next_page": "下一页",
+
+  "error_invalid_country_media_type": "无效的国家或媒体类型。",
+  "media_by_country_title": "{countryName}的电影和电视节目",
+  "media_by_country_default_title": "按国家分类的电影和电视节目",
+
+
+  "movies_genre_title": "{{genreName}} 电影",
+  "movies_by_genre_default_title": "按类型分类的电影",
+  "tv_shows_genre_title": "{{genreName}} 电视节目",
+  "tv_shows_by_genre_default_title": "按类型分类的电视节目",
+  "error_invalid_genre": "错误：无效的类型或内容类型。",
+
+
+  "fetch_data_error": "无法从端点获取数据：{{endpoint}}，第 {{page}} 页。",
+  "fetch_media_list_error": "获取媒体列表时出错：",
+  "loading_initial": "正在加载...",
+  "no_data": "暂无数据。",
+
+
+  "error_fetching_episodes_for_season": "无法获取第{{seasonNumber}}季的剧集：{{status}}",
+  "error_fetching_episodes": "获取剧集时出错：",
+  "error_fetching_related_content": "无法获取相关内容：{{status}}",
+  "error_fetching_popular_content": "无法获取热门内容：{{status}}",
+  "error_fetching_data": "获取数据时出错：",
+  "movie_runtime": "{{runtime}} 分钟",
+  "tv_runtime_range": "约 {{min}}-{{max}} 分钟/集",
+  "tv_runtime_single": "{{runtime}} 分钟/集",
+  "not_available": "N/A",
+  "loading_info": "正在加载信息...",
+  "no_info_found": "未找到信息。",
+  "unknown_title": "未知标题",
+  "runtime_label": "片长",
+  "overview_label": "简介",
+  "no_overview": "暂无简介。",
+  "watch_movie_button": "观看电影",
+  "episode_list_heading": "剧集列表",
+  "season_label": "第 {{seasonNumber}} 季",
+  "episode_label": "第 {{episodeNumber}} 集",
+  "related_movies_heading": "相关电影",
+  "recommended_movies_heading": "推荐电影",
+  
 
   "footer_description": "MoviX - 电影宇宙 - 一个高质量的免费在线电影平台, 提供Vietsub、配音和全高清画质。海量新片、影院大片、电视剧、电影,来自越南、韩国、中国、泰国、日本、欧美等多个国家，类型丰富多样。探索2025年最佳4K画质在线电影平台!"
 }

@@ -20,7 +20,7 @@ interface Movie {
   genre_ids: number[];
   runtime?: number;
   genres: Genre[]; 
-  certification?: string;
+  certification?: string;
 }
 
 interface Genre {

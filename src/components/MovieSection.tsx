@@ -6,6 +6,11 @@ import MovieCard from "./MovieCard";
 import "../styles/MovieSection.css";
 import { LanguageContext } from "../context/LanguageContext";
 
+interface Genre {
+  id: number;
+  name: string;
+}
+
 interface Movie {
   id: number;
   title: string;
@@ -16,6 +21,8 @@ interface Movie {
   first_air_date?: string;
   overview: string;
   media_type: "movie" | "tv";
+  genres?: Genre[];
+  genre_ids?: number[];
 }
 
 interface MovieSectionProps {
@@ -42,7 +49,7 @@ const MovieSection: React.FC<MovieSectionProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchMoviesAndGenres = async () => {
       try {
         setLoading(true);
         setError(null);
@@ -60,30 +67,36 @@ const MovieSection: React.FC<MovieSectionProps> = ({
           zh: "zh-CN",
         }[selectedLanguage] || "en-US";
 
-        const url = `${baseUrl}/${endpoint}?api_key=${apiKey}&language=${apiLanguageCode}&page=1`;
-        const response = await fetch(url);
+        const [moviesResponse, genresResponse] = await Promise.all([
+          fetch(`${baseUrl}/${endpoint}?api_key=${apiKey}&language=${apiLanguageCode}&page=1`),
+          fetch(`${baseUrl}/genre/movie/list?api_key=${apiKey}&language=${apiLanguageCode}`),
+        ]);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!moviesResponse.ok || !genresResponse.ok) {
+          throw new Error(`HTTP error! status: ${moviesResponse.status || genresResponse.status}`);
         }
 
-        const data = await response.json();
-        
-        const transformedMovies = data.results?.slice(0, 20).map((item: any) => ({
+        const moviesData = await moviesResponse.json();
+        const genresData = await genresResponse.json();
+
+        const genreMap = new Map(genresData.genres.map((genre: Genre) => [genre.id, genre.name]));
+
+        const transformedMovies = moviesData.results?.slice(0, 20).map((item: any) => ({
           ...item,
-          media_type: endpoint.includes("movie") ? "movie" : "tv"
+          media_type: endpoint.includes("movie") ? "movie" : "tv",
+          genres: item.genre_ids?.map((id: number) => ({ id, name: genreMap.get(id) })).filter((genre: any) => genre.name),
         }));
 
         setMovies(transformedMovies || []);
       } catch (error) {
         console.error("Error fetching movies:", error);
-        setError(t("error_message_movies_load"));
+        setError("Lỗi khi tải phim.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMovies();
+    fetchMoviesAndGenres();
   }, [endpoint, selectedLanguage, t]);
 
   if (loading) {

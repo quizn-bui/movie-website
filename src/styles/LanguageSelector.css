@@ -7,12 +7,12 @@
   cursor: pointer;
   color: #9ca3af;
   padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .web-language:hover {
-  background-color: #1f2937;
+  background-color: #1d252f66;
   color: white;
 }
 
@@ -23,6 +23,7 @@
 }
 
 .language-display-name {
+  color: #ffffff;
   font-weight: 500;
   font-size: 0.9rem;
 }

@@ -1,10 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Search } from "lucide-react"
 import MovieCard from "../components/MovieCard"
+import ActorCard from "../components/ActorCard"
 import "../styles/SearchPage.css"
+import FilterSelect from "../components/FilterSelect"
+import { sortOptions, yearOptions, genreOptions } from "../data/filterOptions"
+import { LanguageContext } from "../context/LanguageContext"
 
 export interface Movie {
   id: number
@@ -19,6 +23,12 @@ export interface Movie {
 }
 
 export default function SearchPage() {
+  const context = useContext(LanguageContext)
+  if (!context) {
+    throw new Error("SearchPage must be used within a LanguageProvider")
+  }
+  const { selectedLanguage, t } = context
+
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("query") || "";
 
@@ -30,6 +40,29 @@ export default function SearchPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
+  const [appliedFilters, setAppliedFilters] = useState({
+    sort: ['popularity.desc'],
+    year: [''],
+    genres: [''],
+  });
+
+  const [tempFilters, setTempFilters] = useState({
+    sort: ['popularity.desc'],
+    year: [''],
+    genres: [''],
+  });
+
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+  const baseUrl = import.meta.env.VITE_TMDB_BASE_URL
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(tempFilters);
+    setCurrentPage(1);
+    setOpenDropdown(null);
+  };
+    
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (!searchQuery) {
@@ -42,15 +75,33 @@ export default function SearchPage() {
         setLoading(true)
         setError(null)
 
-        const apiKey = import.meta.env.VITE_TMDB_API_KEY
-        const baseUrl = import.meta.env.VITE_TMDB_BASE_URL
-        
         if (!apiKey || !baseUrl) {
           throw new Error("Missing API configuration")
         }
-
+        
+        const apiLanguageCode = {
+          vi: "vi-VN",
+          en: "en-US",
+          zh: "zh-CN",
+        }[selectedLanguage] || "en-US";
+        
         const endpoint = activeFilter === "movie" ? "/search/movie" : "/search/person"
-        const url = `${baseUrl}${endpoint}?api_key=${apiKey}&query=${encodeURIComponent(searchQuery)}&language=vi-VN&page=${currentPage}`
+        let url = `${baseUrl}${endpoint}?api_key=${apiKey}&query=${encodeURIComponent(searchQuery)}&language=${apiLanguageCode}&page=${currentPage}`
+
+        const sortValue = appliedFilters.sort.filter(s => s !== '');
+        if (sortValue.length > 0) {
+          url += `&sort_by=${sortValue[0]}`;
+        }
+        
+        const years = appliedFilters.year.filter(y => y !== '');
+        if (years.length > 0) {
+          url += `&primary_release_year=${years.join(',')}`;
+        }
+        
+        const genres = appliedFilters.genres.filter(g => g !== '');
+        if (genres.length > 0) {
+          url += `&with_genres=${genres.join(',')}`;
+        }
 
         const response = await fetch(url)
 
@@ -62,14 +113,14 @@ export default function SearchPage() {
         setSearchResults(data.results || [])
         setTotalPages(data.total_pages || 0);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error")
+        setError(err instanceof Error ? t("error_message") : t("unknown_error"))
       } finally {
         setLoading(false)
       }
     }
 
     fetchSearchResults()
-  }, [searchQuery, activeFilter, currentPage])
+  }, [searchQuery, activeFilter, currentPage, appliedFilters, apiKey, baseUrl, selectedLanguage, t])
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -109,7 +160,7 @@ export default function SearchPage() {
           disabled={currentPage === 1}
           className="pagination-btn page-nav"
         >
-          &lt; Trước
+          &lt; {t("previous_page")}
         </button>
         {startPage > 1 && (
           <>
@@ -129,7 +180,7 @@ export default function SearchPage() {
           disabled={currentPage === totalPages}
           className="pagination-btn page-nav"
         >
-          Sau &gt;
+          {t("next_page")} &gt;
         </button>
       </div>
     );
@@ -139,7 +190,7 @@ export default function SearchPage() {
     <div className="search-page-container">
       <div className="search-page-header">
         <Search className="search-page-icon" />
-        <h1 className="search-page-title">Kết quả tìm kiếm "{decodeURIComponent(searchQuery)}"</h1>
+        <h1 className="search-page-title">{t("search_results_for")} "{decodeURIComponent(searchQuery)}"</h1>
       </div>
 
       <div className="filter-buttons">
@@ -150,7 +201,7 @@ export default function SearchPage() {
             setCurrentPage(1);
           }}
         >
-          Phim
+          {t("movies_tab")}
         </button>
         <button
           className={`filter-btn ${activeFilter === "person" ? "active" : ""}`}
@@ -159,46 +210,56 @@ export default function SearchPage() {
             setCurrentPage(1);
           }}
         >
-          Diễn viên
+          {t("actors_tab")}
         </button>
       </div>
-
-      <div className="filters-container">
-        <div className="filters-row">
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Sắp xếp theo</span>
-            <span className="dropdown-arrow">▼</span>
+      
+      {activeFilter === 'movie' && (
+        <div className="filters-container">
+          <div className="filters-row">
+            <FilterSelect
+              label={t("sort_by_label")}
+              options={sortOptions}
+              onSelect={(values) => setTempFilters({ ...tempFilters, sort: values })}
+              selectedValues={tempFilters.sort}
+              isOpen={openDropdown === 'sort'}
+              onToggle={() => setOpenDropdown(openDropdown === 'sort' ? null : 'sort')}
+            />
+            <FilterSelect
+              label={t("release_year_label")}
+              options={yearOptions}
+              onSelect={(values) => setTempFilters({ ...tempFilters, year: values })}
+              selectedValues={tempFilters.year}
+              isOpen={openDropdown === 'year'}
+              onToggle={() => setOpenDropdown(openDropdown === 'year' ? null : 'year')}
+            />
+            <FilterSelect
+              label={t("genre_label")}
+              options={genreOptions}
+              onSelect={(values) => setTempFilters({ ...tempFilters, genres: values })}
+              selectedValues={tempFilters.genres}
+              isOpen={openDropdown === 'genres'}
+              onToggle={() => setOpenDropdown(openDropdown === 'genres' ? null : 'genres')}
+            />
+            <button onClick={handleApplyFilters} className="filter-button">{t("filter_movies_button")}</button>
           </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Năm phát hành</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Trạng thái</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <div className="filter-dropdown">
-            <span className="dropdown-label">Thể loại</span>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-          <button className="filter-button">Lọc phim</button>
         </div>
-      </div>
+      )}
 
-      {loading && <div className="loading-message">Đang tải kết quả...</div>}
-      {error && <div className="error-message">Lỗi: {error}</div>}
+      {loading && <div className="loading-message">{t("loading_results")}</div>}
+      {error && <div className="error-message">{t("error_message")}: {error}</div>}
       {!loading && !error && searchResults.length === 0 && (
-        <div className="no-results-message">Không tìm thấy kết quả nào.</div>
+        <div className="no-results-message">{t("no_results_found")}</div>
       )}
 
       {!loading && !error && searchResults.length > 0 && (
         <>
           <div className="search-results-grid">
             {searchResults.map((movie) => (
-              <MovieCard 
-                  key={movie.id} 
-                  movie={movie} 
-                  mediaType={movie.media_type}
+              <MovieCard
+                key={movie.id}
+                movie={movie}
+                mediaType={movie.media_type}
               />
             ))}
           </div>

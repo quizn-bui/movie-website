@@ -1,68 +1,69 @@
-/* styles/FilterSelect.css */
-
-.filters-container__filter {
+.filters-container-filter {
   position: relative;
   width: auto;
+  z-index: 10;
 }
 
-.filters-container__filter-header {
-  background-color: #1e293b;
-  border-radius: 5px;
-  padding: 10px 15px;
-  cursor: pointer;
+.filters-container-filter-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  padding: 10px 15px;
+  background-color: #1e293b;
+  border-radius: 5px;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
-.filters-container__filter-header:hover {
+.filters-container-filter-header:hover {
   background-color: #334155;
 }
 
-.filters-container__filter-label {
-  white-space: nowrap;
-  color: #fff;
+.filters-container-filter-header.active .filters-container-filter-arrow {
+  transform: rotate(180deg);
 }
 
-.filters-container__filter-arrow {
+.filters-container-filter-label {
+  color: #fff;
+  white-space: nowrap;
+}
+
+.filters-container-filter-arrow {
   color: #6b7280;
   transition: transform 0.2s ease-in-out;
 }
 
-.filters-container__filter-header.active .filters-container__filter-arrow {
-  transform: rotate(180deg);
-}
-
-.filters-container__filter-menu {
+.filters-container-filter-menu {
   position: absolute;
   top: 100%;
   left: 0;
   width: 200px;
+  padding: 5px 0;
+  margin-top: 5px;
   background-color: #1e293b;
   border: 1px solid #334155;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 5px;
-  z-index: 10;
-  padding: 5px 0;
+  z-index: 20;
+  max-height: 250px;
+  overflow-y: auto;
 }
 
-.filters-container__filter-item {
+.filters-container-filter-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 10px 15px;
   cursor: pointer;
   transition: background-color 0.2s;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
-.filters-container__filter-item:hover {
+.filters-container-filter-item:hover {
   background-color: #334155;
 }
 
-.filters-container__filter-item.selected {
+.filters-container-filter-item.selected {
   font-weight: bold;
 }
 
@@ -71,6 +72,6 @@
 }
 
 .selected-icon {
-  color: #10b981;
+  color: #b91010;
   font-weight: bold;
 }

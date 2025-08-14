@@ -1,11 +1,14 @@
 {
+  "homepage": "Home",
   "header_movies": "Movies",
   "header_tv_shows": "TV Shows",
-  "header_series": "Series",
   "header_genres": "Genres",
-  "search_placeholder": "Search movie...",
+  "header_countries": "Countries",
+  "loading_countries": "Loading countries...",
+  "api_key_or_base_url_missing": "TMDB API Key or Base URL is not configured.",
+  "http_error_status": "HTTP error! Status",
+  "search_placeholder": "Search for movies...",
   "no_results": "No results found.",
-  "homepage": "Home",
   "loading_genres": "Loading genres...",
   "language_vietnamese": "Vietnamese",
   "language_english": "English",
@@ -44,7 +47,72 @@
   "new_release_movies_title": "New Release - Movies",
   "new_release_series_title": "New Release - Series",
   "recommended_title": "Recommended",
-  
+
+
+  "missing_api_config": "Missing API configuration.",
+  "http_error_message": "HTTP error",
+  "unknown_error": "An unknown error occurred.",
+  "back_button": "Back",
+  "homepage_title": "Home",
+  "sort_by_label": "Sort by",
+  "release_year_label": "Release Year",
+  "genre_label": "Genres",
+  "filter_movies_button": "Filter Movies",
+  "loading_more": "Loading more...",
+  "load_more_button": "Load more",
+
+
+  "search_results_for": "Search results for",
+  "movies_tab": "Movies",
+  "actors_tab": "Actors",
+  "loading_results": "Loading results...",
+  "no_results_found": "No results found.",
+  "previous_page": "Previous",
+  "next_page": "Next",
+
+  "error_invalid_country_media_type": "Invalid country or media type.",
+  "media_by_country_title": "Movies & TV Shows from {countryName}",
+  "media_by_country_default_title": "Movies & TV Shows by Country",
+
+
+
+  "movies_genre_title": "Movies in {{genreName}}",
+  "movies_by_genre_default_title": "Movies by Genre",
+  "tv_shows_genre_title": "TV Shows in {{genreName}}",
+  "tv_shows_by_genre_default_title": "TV Shows by Genre",
+  "error_invalid_genre": "Error: Invalid genre or media type.",
+
+
+
+  "fetch_data_error": "Could not fetch data from endpoint: {{endpoint}}, page {{page}}.",
+  "fetch_media_list_error": "Error fetching media list:",
+  "loading_initial": "Loading...",
+  "no_data": "No data available.",
+
+
+  "error_fetching_episodes_for_season": "Could not fetch episodes for season {{seasonNumber}}: {{status}}",
+  "error_fetching_episodes": "Error fetching episodes:",
+  "error_fetching_related_content": "Could not fetch related content: {{status}}",
+  "error_fetching_popular_content": "Could not fetch popular content: {{status}}",
+  "error_fetching_data": "Error fetching data:",
+  "movie_runtime": "{{runtime}} minutes",
+  "tv_runtime_range": "~{{min}}-{{max}} min/episode",
+  "tv_runtime_single": "{{runtime}} min/episode",
+  "not_available": "N/A",
+  "loading_info": "Loading information...",
+  "no_info_found": "No information found.",
+  "unknown_title": "Unknown Title",
+  "runtime_label": "Runtime",
+  "overview_label": "Overview",
+  "no_overview": "No overview available.",
+  "watch_movie_button": "Watch Movie",
+  "episode_list_heading": "EPISODE LIST",
+  "season_label": "Season {{seasonNumber}}",
+  "episode_label": "Episode {{episodeNumber}}",
+  "related_movies_heading": "RELATED MOVIES",
+  "recommended_movies_heading": "RECOMMENDED MOVIES",
+
+
 
   "footer_description": "MoviX - Movie Universe - A high-quality free online movie streaming platform with Vietsub, dubbing, and full HD. A huge collection of new movies, cinema hits, TV series, and films from various countries like Vietnam, Korea, China, Thailand, Japan, Europe, and America, covering diverse genres. Discover the best 2025 online movie platform with 4K quality!"
 }

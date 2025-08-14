@@ -9,12 +9,13 @@ export interface Movie {
   id: number
   title: string
   name?: string
-  poster_path: string | null;
+  poster_path: string | null
   vote_average: number
   release_date: string
   first_air_date?: string
   overview: string
-  media_type?: string 
+  media_type?: string
+  genres?: { id: number; name: string }[]
 }
 
 interface MovieCardProps {
@@ -79,7 +80,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, mediaType }) => {
           {movie.vote_average > 0 && (
             <div className="rating-badge">
               <span className="rating-text" style={{ color: getRatingColor(movie.vote_average) }}>
-                ★ {formatRating(movie.vote_average)} 
+                ★ {formatRating(movie.vote_average)}
               </span>
             </div>
           )}
@@ -89,8 +90,15 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, mediaType }) => {
           <h3 className="movie-title">{title}</h3>
           <div className="movie-meta">
             {releaseDate && <span className="movie-year">{getYear(releaseDate)}</span>}
-             <span className="badge-hd-card">HD</span>
+            
           </div>
+          {movie.genres && movie.genres.length > 0 && (
+            <div className="movie-genres">
+              {movie.genres.slice(0, 2).map(genre => (
+                <span key={genre.id} className="genre-tag-card">{genre.name}</span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Link>

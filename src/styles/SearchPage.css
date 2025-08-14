@@ -2,7 +2,7 @@
   background-color: #1a202c;
   min-height: 100vh;
   color: white;
-  padding: 100px 20px 40px; 
+  padding: 100px 40px 40px; 
   font-family: system-ui, -apple-system, sans-serif;
 }
 
@@ -11,7 +11,7 @@
   align-items: center;
   gap: 15px;
   margin-bottom: 30px;
-  padding: 0 20px;
+  
 }
 
 .search-page-icon {
@@ -30,7 +30,6 @@
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
-  padding: 0 20px;
 }
 
 .filter-btn {
@@ -88,7 +87,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
   gap: 20px;
-  padding: 0 20px;
+  padding: 0 20px 0 0;
   justify-items: center; 
 }
 
@@ -110,7 +109,7 @@
   .search-page-header,
   .filter-buttons,
   .filter-section {
-    padding: 0 16px;
+    padding: 0 0px;
   }
   .search-page-title {
     font-size: 20px;
@@ -169,7 +168,7 @@
 
 .filters-container {
   margin: 20px 0;
-  padding: 0 20px;
+  
 }
 
 .filters-row {

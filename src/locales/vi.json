@@ -1,11 +1,14 @@
 {
-  "header_movies": "Phim lẻ",
-  "header_tv_shows": "TV Shows",
-  "header_series": "Phim bộ",
-  "header_genres": "Thể loại",
+  "homepage": "Trang chủ",
+  "header_movies": "Phim Lẻ",
+  "header_tv_shows": "Phim Bộ",
+  "header_genres": "Thể Loại",
+  "header_countries": "Quốc gia",
+  "loading_countries": "Đang tải quốc gia...",
+  "api_key_or_base_url_missing": "TMDB API Key hoặc Base URL chưa được cấu hình.",
+  "http_error_status": "Lỗi HTTP! Trạng thái",
   "search_placeholder": "Tìm kiếm phim...",
   "no_results": "Không tìm thấy kết quả.",
-  "homepage": "Trang chủ",
   "loading_genres": "Đang tải thể loại...",
   "language_vietnamese": "Tiếng Việt",
   "language_english": "English",
@@ -41,6 +44,68 @@
   "new_release_movies_title": "Phim Mới Phát Hành - Phim Lẻ",
   "new_release_series_title": "Phim Mới Phát Hành - Phim Bộ",
   "recommended_title": "Được Đề Xuất",
+
+
+  "missing_api_config": "Thiếu cấu hình API.",
+  "http_error_message": "Lỗi HTTP",
+  "unknown_error": "Một lỗi không xác định đã xảy ra.",
+  "back_button": "Quay lại",
+  "homepage_title": "Trang chủ",
+  "sort_by_label": "Sắp xếp theo",
+  "release_year_label": "Năm phát hành",
+  "genre_label": "Thể loại",
+  "filter_movies_button": "Lọc phim",
+  "loading_more": "Đang tải thêm...",
+  "load_more_button": "Xem thêm",
+
+
+  "search_results_for": "Kết quả tìm kiếm cho",
+  "movies_tab": "Phim",
+  "actors_tab": "Diễn viên",
+  "loading_results": "Đang tải kết quả...",
+  "no_results_found": "Không tìm thấy kết quả nào.",
+  "previous_page": "Trước",
+  "next_page": "Sau",
+
+  "error_invalid_country_media_type": "Quốc gia hoặc loại phương tiện không hợp lệ.",
+  "media_by_country_title": "Tổng hợp phim {countryName}",
+  "media_by_country_default_title": "Phim và TV Show theo Quốc gia",
+
+
+  "movies_genre_title": "Thể loại: {{genreName}}",
+  "movies_by_genre_default_title": "Phim theo Thể loại",
+  "tv_shows_genre_title": "TV Shows Thể loại: {{genreName}}",
+  "tv_shows_by_genre_default_title": "TV Shows theo Thể loại",
+  "error_invalid_genre": "Lỗi: Không tìm thấy thể loại hoặc loại nội dung không hợp lệ.",
+
+  "fetch_data_error": "Không thể lấy dữ liệu từ endpoint: {{endpoint}}, trang {{page}}.",
+  "fetch_media_list_error": "Lỗi khi lấy danh sách media:",
+  "loading_initial": "Đang tải...",
+  "no_data": "Không có dữ liệu.",
+
+
+
+  "error_fetching_episodes_for_season": "Không thể lấy tập cho phần {{seasonNumber}}: {{status}}",
+  "error_fetching_episodes": "Lỗi khi lấy tập:",
+  "error_fetching_related_content": "Không thể lấy nội dung liên quan: {{status}}",
+  "error_fetching_popular_content": "Không thể lấy nội dung phổ biến: {{status}}",
+  "error_fetching_data": "Lỗi khi lấy dữ liệu:",
+  "movie_runtime": "{{runtime}} phút",
+  "tv_runtime_range": "~{{min}}-{{max}} phút/tập",
+  "tv_runtime_single": "{{runtime}} phút/tập",
+  "not_available": "N/A",
+  "loading_info": "Đang tải thông tin...",
+  "no_info_found": "Không tìm thấy thông tin.",
+  "unknown_title": "Tiêu đề không rõ",
+  "runtime_label": "Thời lượng",
+  "overview_label": "Tóm tắt",
+  "no_overview": "Không có tóm tắt.",
+  "watch_movie_button": "Xem Phim",
+  "episode_list_heading": "DANH SÁCH TẬP",
+  "season_label": "Phần {{seasonNumber}}",
+  "episode_label": "Tập {{episodeNumber}}",
+  "related_movies_heading": "PHIM LIÊN QUAN",
+  "recommended_movies_heading": "PHIM ĐỀ CỬ",
 
 
   "footer_description": "MoviX - Vũ trụ phim - Trang xem phim online chất lượng cao miễn phí Vietsub, thuyết minh, lồng tiếng full HD. Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc, Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ… đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay nhất 2025 chất lượng 4K!"
