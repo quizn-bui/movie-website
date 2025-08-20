@@ -145,9 +145,6 @@ export default function DesktopNavigation({ currentPath }: DesktopNavigationProp
   return (
     <>
       <nav className="desktop-nav">
-        <Link to="/" className={`nav-link ${currentPath === '/' ? 'nav-link-active' : ''}`}>
-          {t("homepage")}
-        </Link>
         <Link to="/movies" className={`nav-link ${currentPath === '/movies' ? 'nav-link-active' : ''}`}>
           {t("header_movies")}
         </Link>

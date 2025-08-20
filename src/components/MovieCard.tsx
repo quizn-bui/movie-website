@@ -90,7 +90,6 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, mediaType }) => {
           <h3 className="movie-title">{title}</h3>
           <div className="movie-meta">
             {releaseDate && <span className="movie-year">{getYear(releaseDate)}</span>}
-            
           </div>
           {movie.genres && movie.genres.length > 0 && (
             <div className="movie-genres">

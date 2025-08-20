@@ -6,6 +6,7 @@ import MovieCard from "./MovieCard";
 import "../styles/MovieSection.css";
 import { LanguageContext } from "../context/LanguageContext";
 
+// **Đã thêm lại các interface bị thiếu**
 interface Genre {
   id: number;
   name: string;
@@ -29,7 +30,9 @@ interface MovieSectionProps {
   title: string;
   endpoint: string;
   showViewAll?: boolean;
-  onViewAll?: () => void;
+  onViewAll?: (title: string, endpoint: string) => void;
+  isPersonCredits?: boolean;
+  limit?: number | null;
 }
 
 const MovieSection: React.FC<MovieSectionProps> = ({
@@ -37,6 +40,8 @@ const MovieSection: React.FC<MovieSectionProps> = ({
   endpoint,
   showViewAll = true,
   onViewAll,
+  isPersonCredits = false,
+  limit = 20,
 }) => {
   const context = useContext(LanguageContext);
   if (!context) {
@@ -49,7 +54,7 @@ const MovieSection: React.FC<MovieSectionProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchMoviesAndGenres = async () => {
+    const fetchMovies = async () => {
       try {
         setLoading(true);
         setError(null);
@@ -67,37 +72,44 @@ const MovieSection: React.FC<MovieSectionProps> = ({
           zh: "zh-CN",
         }[selectedLanguage] || "en-US";
 
-        const [moviesResponse, genresResponse] = await Promise.all([
-          fetch(`${baseUrl}/${endpoint}?api_key=${apiKey}&language=${apiLanguageCode}&page=1`),
-          fetch(`${baseUrl}/genre/movie/list?api_key=${apiKey}&language=${apiLanguageCode}`),
-        ]);
+        const moviesResponse = await fetch(
+          `${baseUrl}/${endpoint}?api_key=${apiKey}&language=${apiLanguageCode}&page=1`
+        );
 
-        if (!moviesResponse.ok || !genresResponse.ok) {
-          throw new Error(`HTTP error! status: ${moviesResponse.status || genresResponse.status}`);
+        if (!moviesResponse.ok) {
+          throw new Error(`HTTP error! status: ${moviesResponse.status}`);
         }
 
         const moviesData = await moviesResponse.json();
-        const genresData = await genresResponse.json();
 
-        const genreMap = new Map(genresData.genres.map((genre: Genre) => [genre.id, genre.name]));
+        let transformedMovies: Movie[] = [];
+        let dataToProcess = [];
 
-        const transformedMovies = moviesData.results?.slice(0, 20).map((item: any) => ({
-          ...item,
-          media_type: endpoint.includes("movie") ? "movie" : "tv",
-          genres: item.genre_ids?.map((id: number) => ({ id, name: genreMap.get(id) })).filter((genre: any) => genre.name),
+        if (isPersonCredits) {
+          dataToProcess = moviesData.cast.filter((item: any) => item.media_type === "movie" || item.media_type === "tv");
+        } else {
+          dataToProcess = moviesData.results || [];
+        }
+
+        const slicedData = limit ? dataToProcess.slice(0, limit) : dataToProcess;
+        
+        transformedMovies = slicedData.map((item: any) => ({
+            ...item,
+            title: item.title || item.name || t("unknown_title"),
+            media_type: item.media_type || (endpoint.includes("movie") ? "movie" : "tv"),
         }));
 
         setMovies(transformedMovies || []);
       } catch (error) {
         console.error("Error fetching movies:", error);
-        setError("Lỗi khi tải phim.");
+        setError(t("error_loading_movies"));
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMoviesAndGenres();
-  }, [endpoint, selectedLanguage, t]);
+    fetchMovies();
+  }, [endpoint, selectedLanguage, t, isPersonCredits, limit]);
 
   if (loading) {
     return (
@@ -122,22 +134,15 @@ const MovieSection: React.FC<MovieSectionProps> = ({
   }
 
   if (movies.length === 0) {
-    return (
-      <div className="movie-section">
-        <div className="section-header">
-          <h2 className="section-title">{t(title)}</h2>
-        </div>
-        <div className="no-movies">{t("no_movies_found")}</div>
-      </div>
-    );
+    return null;
   }
 
   return (
     <div className="movie-section">
       <div className="section-header">
         <h2 className="section-title">{t(title)}</h2>
-        {showViewAll && (
-          <button className="view-all-btn" onClick={onViewAll}>
+        {showViewAll && onViewAll && (
+          <button className="view-all-btn" onClick={() => onViewAll(title, endpoint)}>
             {t("view_all_button")} →
           </button>
         )}

@@ -85,7 +85,7 @@ export default function Header() {
     const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
 
     const apiLanguageCode = {
-      vi: "vi-VN",
+      VI: "vi-VN",
       en: "en-US",
       zh: "zh-CN",
     }[selectedLanguage];

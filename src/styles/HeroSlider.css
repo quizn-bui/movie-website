@@ -265,6 +265,36 @@
   border-radius: 4px !important;
 }
 
+
+.toast-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #111827;
+  color: #c1bebe;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 20px 30px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeinout 3s forwards;
+}
+
+@keyframes fadeinout {
+  0% {
+    opacity: 0;
+  }
+  20%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (min-width: 1440px) {
   .hero-container, .loading-container {
     

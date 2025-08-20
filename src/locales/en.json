@@ -76,7 +76,7 @@
 
 
 
-  "movies_genre_title": "Movies in {{genreName}}",
+  "movies_genre_title": "{genreName}",
   "movies_by_genre_default_title": "Movies by Genre",
   "tv_shows_genre_title": "TV Shows in {{genreName}}",
   "tv_shows_by_genre_default_title": "TV Shows by Genre",
@@ -95,7 +95,7 @@
   "error_fetching_related_content": "Could not fetch related content: {{status}}",
   "error_fetching_popular_content": "Could not fetch popular content: {{status}}",
   "error_fetching_data": "Error fetching data:",
-  "movie_runtime": "{{runtime}} minutes",
+  "movie_runtime": "{runtime} minutes",
   "tv_runtime_range": "~{{min}}-{{max}} min/episode",
   "tv_runtime_single": "{{runtime}} min/episode",
   "not_available": "N/A",
@@ -107,10 +107,33 @@
   "no_overview": "No overview available.",
   "watch_movie_button": "Watch Movie",
   "episode_list_heading": "EPISODE LIST",
-  "season_label": "Season {{seasonNumber}}",
-  "episode_label": "Episode {{episodeNumber}}",
+  "season_label": "Season {seasonNumber}",
+  "episode_label": "Episode {episodeNumber}",
   "related_movies_heading": "RELATED MOVIES",
   "recommended_movies_heading": "RECOMMENDED MOVIES",
+  "error_fetching_credits": "Error fetching cast and crew info: {{status}}",
+  "director_label": "Director",
+  "country_label": "Country",
+  "producers_label": "Producers",
+  "cast_heading": "CAST",
+
+  "no_biography": "No biography available.",
+  "birthday_label": "Birthday",
+  "place_of_birth_label": "Place of Birth",
+  "known_for_heading": "KNOWN FOR",
+
+
+  "error_fetch_movie_data": "Failed to fetch movie data. Please try again later.",
+  "no_trailer_available": "No trailer available",
+  "subtitle_label": "Subtitle",
+  "favorite_button": "Favorite",
+  "share_button": "Share",
+  "movie_content_heading": "Movie Content",
+  "no_description": "No description available for this movie.",
+  "genres_label": "Genres",
+  "runtime_minutes": "{{runtime}} minutes",
+  "rating_label": "Rating",
+  "similar_movies_heading": "SIMILAR MOVIES",
 
 
 

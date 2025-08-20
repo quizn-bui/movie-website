@@ -8,7 +8,13 @@ import "../styles/HeroSlider.css";
 import "swiper/css";
 import "swiper/css/pagination";
 
+interface Genre {
+  id: number;
+  name: string;
+}
+
 interface Movie {
+  media_type: 'movie';
   id: number;
   title: string;
   original_title: string;
@@ -17,16 +23,25 @@ interface Movie {
   poster_path: string;
   vote_average: number;
   release_date: string;
-  genre_ids: number[];
+  genres: Genre[];
   runtime?: number;
-  genres: Genre[]; 
   certification?: string;
 }
 
-interface Genre {
+interface TvShow {
+  media_type: 'tv';
   id: number;
   name: string;
+  original_name: string;
+  overview: string;
+  backdrop_path: string;
+  poster_path: string;
+  vote_average: number;
+  first_air_date: string;
+  genres: Genre[];
 }
+
+type TrendingItem = Movie | TvShow;
 
 export default function HeroSlider() {
   const context = useContext(LanguageContext);
@@ -35,9 +50,9 @@ export default function HeroSlider() {
   }
   const { selectedLanguage, t } = context;
 
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [genres, setGenres] = useState<Genre[]>([]); 
+  const [trendingItems, setTrendingItems] = useState<TrendingItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,45 +69,45 @@ export default function HeroSlider() {
         zh: "zh-CN",
       }[selectedLanguage] || "en-US";
 
-      const [moviesResponse, genresResponse] = await Promise.all([
-        fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=1&language=${apiLanguageCode}`),
-        fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}&language=${apiLanguageCode}`), 
-      ]);
+      const trendingResponse = await fetch(
+        `${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=${apiLanguageCode}`
+      );
+      const trendingData = await trendingResponse.json();
+      const trendingList = trendingData.results.filter((item: any) => item.media_type !== 'person').slice(0, 5);
 
-      const moviesData = await moviesResponse.json();
-      const genresData = await genresResponse.json();
-      const popularMovies = moviesData.results.slice(0, 5);
-
-      const moviesWithDetails = await Promise.all(
-        popularMovies.map(async (movie: Movie) => {
-          const movieDetailsResponse = await fetch(
-            `${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}&language=${apiLanguageCode}`
+      const trendingWithDetails = await Promise.all(
+        trendingList.map(async (item: TrendingItem) => {
+          const itemDetailsResponse = await fetch(
+            `${BASE_URL}/${item.media_type}/${item.id}?api_key=${API_KEY}&language=${apiLanguageCode}`
           );
-          const movieDetailsData = await movieDetailsResponse.json();
+          const itemDetailsData = await itemDetailsResponse.json();
 
-          const releaseDatesResponse = await fetch(
-          `${BASE_URL}/movie/${movie.id}/release_dates?api_key=${API_KEY}`
-        );
-        const releaseDatesData = await releaseDatesResponse.json();
+          if (item.media_type === 'movie') {
+            const releaseDatesResponse = await fetch(
+              `${BASE_URL}/movie/${item.id}/release_dates?api_key=${API_KEY}`
+            );
+            const releaseDatesData = await releaseDatesResponse.json();
+            const vnRating = releaseDatesData.results.find(
+              (release: any) => release.iso_3166_1 === "VN"
+            );
+            const certification = vnRating?.release_dates[0]?.certification || "";
 
-        const vnRating = releaseDatesData.results.find(
-          (release: any) => release.iso_3166_1 === "VN"
-        );
-        const certification = vnRating?.release_dates[0]?.certification || "";
-
-          
-
-          return {
-            ...movie,
-            runtime: movieDetailsData.runtime,
-            genres: movieDetailsData.genres, 
-            certification: certification,
-          };
+            return {
+              ...item,
+              runtime: itemDetailsData.runtime,
+              genres: itemDetailsData.genres,
+              certification: certification,
+            } as Movie;
+          } else { 
+            return {
+              ...item,
+              genres: itemDetailsData.genres,
+            } as TvShow;
+          }
         })
       );
 
-      setMovies(moviesWithDetails);
-      setGenres(genresData.genres);
+      setTrendingItems(trendingWithDetails);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -100,8 +115,15 @@ export default function HeroSlider() {
     }
   };
 
-  const handleWatchNowClick = (movieId: number) => {
-    navigate(`/movie/${movieId}`); 
+  const handleWatchNowClick = (itemId: number, mediaType: string) => {
+    navigate(`/${mediaType}/${itemId}`);
+  };
+
+  const handleWatchLaterClick = () => {
+    setMessage(t("added_to_watchlist_message"));
+    setTimeout(() => {
+      setMessage(null);
+    }, 3000);
   };
 
   const formatRuntime = (minutes: number | undefined) => {
@@ -113,7 +135,7 @@ export default function HeroSlider() {
     return `${hours}h ${remainingMinutes}m`;
   };
 
-  if (loading || movies.length === 0) {
+  if (loading || trendingItems.length === 0) {
     return (
       <div className="loading-container">
         <div className="loading-overlay" />
@@ -124,6 +146,7 @@ export default function HeroSlider() {
 
   return (
     <div className="hero-container">
+      {message && <div className="toast-message">{message}</div>}
       <Swiper
         modules={[Pagination, Navigation, Autoplay]}
         spaceBetween={0}
@@ -141,13 +164,13 @@ export default function HeroSlider() {
         }}
         className="swiper"
       >
-        {movies.map((movie) => (
-          <SwiperSlide key={movie.id}>
+        {trendingItems.map((item) => (
+          <SwiperSlide key={item.id}>
             <div className="slide">
               <div
                 className="background-image"
                 style={{
-                  backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
+                  backgroundImage: `url(https://image.tmdb.org/t/p/original${item.backdrop_path})`,
                 }}
               />
               <div className="gradient-overlay" />
@@ -155,39 +178,55 @@ export default function HeroSlider() {
               <div className="content">
                 <div className="movie-info-slide">
                   <div className="title-slide">
-                    <h1 className="title-top">{movie.title}</h1>
-                    <p className="original-title-slide">({movie.original_title})</p>
+                    <h1 className="title-top">
+                      {item.media_type === 'movie' ? (item as Movie).title : (item as TvShow).name}
+                    </h1>
+                    <p className="original-title-slide">
+                      ({item.media_type === 'movie' ? (item as Movie).original_title : (item as TvShow).original_name})
+                    </p>
                     <div className="metadata">
                       <i className="fa-regular fa-calendar-days"></i>
-                      <span className="year">{new Date(movie.release_date).getFullYear()}</span>
-                      <i className="fa-solid fa-clock-rotate-left"></i>
-                      <span className="duration">{formatRuntime(movie.runtime)}</span>
+                      <span className="year">
+                        {new Date(
+                          item.media_type === 'movie' ? (item as Movie).release_date : (item as TvShow).first_air_date
+                        ).getFullYear()}
+                      </span>
+                      {item.media_type === 'movie' && (
+                        <>
+                          <i className="fa-solid fa-clock-rotate-left"></i>
+                          <span className="duration">
+                            {formatRuntime((item as Movie).runtime)}
+                          </span>
+                        </>
+                      )}
                       <div className="movie-badges">
                         <i className="fa-solid fa-star"></i>
-                        <span className="rating-badge-slide">{movie.vote_average.toFixed(1)}</span>
-                        {movie.certification && (
-                          <span className="badge age">{movie.certification}</span>
+                        <span className="rating-badge-slide">{item.vote_average.toFixed(1)}</span>
+                        {item.media_type === 'movie' && (item as Movie).certification && (
+                          <span className="badge age">{(item as Movie).certification}</span>
                         )}
                         <span className="badge hd">HD</span>
                       </div>
                     </div>
                     <div className="genres-slide">
-                        {movie.genres?.slice(0, 3).map((genre) => (
-                          <span key={genre.id} className="genre-tag-slide">
-                            {genre.name}
-                          </span>
-                        ))}
-                      </div>
-                    <p className="overview">{movie.overview}</p>
+                      {item.genres?.slice(0, 3).map((genre) => (
+                        <span key={genre.id} className="genre-tag-slide">
+                          {genre.name}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="overview">{item.overview}</p>
                   </div>
                   <div className="view-action">
                     <div className="actions">
-                      <button className="watch-btn" onClick={() => handleWatchNowClick(movie.id)}>
+                      <button
+                        className="watch-btn"
+                        onClick={() => handleWatchNowClick(item.id, item.media_type)}
+                      >
                         {t("watch_now_button")}
                         <i className="fa-solid fa-circle-play"></i>
                       </button>
-
-                      <button className="watch-later-btn">
+                      <button className="watch-later-btn" onClick={handleWatchLaterClick}>
                         {t("watch_later_button")}
                         <i className="fa-solid fa-clock"></i>
                       </button>

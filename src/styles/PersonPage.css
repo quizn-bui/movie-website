@@ -1,0 +1,87 @@
+.person-page-container {
+    background-color: #1a202c;
+    min-height: 100vh;
+    color: white;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 80px 40px 40px;
+}
+
+.person-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.person-header {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+.person-profile-image {
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+.person-info {
+    flex: 1;
+}
+
+.person-name {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0 0 10px;
+}
+
+.person-biography {
+    font-size: 16px;
+    color: #d1d5db;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.person-meta {
+    font-size: 16px;
+    color: #d1d5db;
+}
+
+.person-meta strong {
+    color: white;
+    margin-right: 5px;
+}
+
+.person-known-for-section {
+    margin-top: 40px;
+}
+
+.loading-message,
+.error-message,
+.no-data-message {
+    text-align: center;
+    padding: 50px 20px;
+    font-size: 18px;
+    color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+    .person-page-container {
+        padding: 60px 20px 20px;
+    }
+
+    .person-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .person-profile-image {
+        width: 200px;
+    }
+
+    .person-name {
+        font-size: 32px;
+    }
+}

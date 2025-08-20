@@ -74,7 +74,7 @@
   "media_by_country_default_title": "按国家分类的电影和电视节目",
 
 
-  "movies_genre_title": "{{genreName}} 电影",
+  "movies_genre_title": "{genreName}",
   "movies_by_genre_default_title": "按类型分类的电影",
   "tv_shows_genre_title": "{{genreName}} 电视节目",
   "tv_shows_by_genre_default_title": "按类型分类的电视节目",
@@ -92,7 +92,7 @@
   "error_fetching_related_content": "无法获取相关内容：{{status}}",
   "error_fetching_popular_content": "无法获取热门内容：{{status}}",
   "error_fetching_data": "获取数据时出错：",
-  "movie_runtime": "{{runtime}} 分钟",
+  "movie_runtime": "{runtime} 分钟",
   "tv_runtime_range": "约 {{min}}-{{max}} 分钟/集",
   "tv_runtime_single": "{{runtime}} 分钟/集",
   "not_available": "N/A",
@@ -104,11 +104,34 @@
   "no_overview": "暂无简介。",
   "watch_movie_button": "观看电影",
   "episode_list_heading": "剧集列表",
-  "season_label": "第 {{seasonNumber}} 季",
-  "episode_label": "第 {{episodeNumber}} 集",
+  "season_label": "第 {seasonNumber} 季",
+  "episode_label": "第 {episodeNumber} 集",
   "related_movies_heading": "相关电影",
   "recommended_movies_heading": "推荐电影",
-  
+  "error_fetching_credits": "获取演职员信息时出错：{{status}}",
+  "director_label": "导演",
+  "country_label": "国家",
+  "producers_label": "制片公司",
+  "cast_heading": "演员",
+
+
+  "no_biography": "暂无生平简介。",
+  "birthday_label": "生日",
+  "place_of_birth_label": "出生地",
+  "known_for_heading": "代表作品",
+
+
+  "error_fetch_movie_data": "无法加载电影数据。请稍后重试。",
+  "no_trailer_available": "没有可用的预告片",
+  "subtitle_label": "中文字幕",
+  "favorite_button": "收藏",
+  "share_button": "分享",
+  "movie_content_heading": "电影内容",
+  "no_description": "本电影暂无简介。",
+  "genres_label": "类型",
+  "runtime_minutes": "{{runtime}} 分钟",
+  "rating_label": "评分",
+  "similar_movies_heading": "类似电影",
 
   "footer_description": "MoviX - 电影宇宙 - 一个高质量的免费在线电影平台, 提供Vietsub、配音和全高清画质。海量新片、影院大片、电视剧、电影,来自越南、韩国、中国、泰国、日本、欧美等多个国家，类型丰富多样。探索2025年最佳4K画质在线电影平台!"
 }

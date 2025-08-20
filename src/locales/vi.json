@@ -26,6 +26,7 @@
   "watch_now_button": "Xem Ngay",
   "watch_later_button": "Xem Sau",
   "loading_text": "Đang tải dữ liệu...",
+  "added_to_watchlist_message": "Đã thêm vào danh sách xem sau",
 
 
   "loading_movies": "Đang tải phim...",
@@ -72,7 +73,7 @@
   "media_by_country_default_title": "Phim và TV Show theo Quốc gia",
 
 
-  "movies_genre_title": "Thể loại: {{genreName}}",
+  "movies_genre_title": "Thể loại: {genreName}",
   "movies_by_genre_default_title": "Phim theo Thể loại",
   "tv_shows_genre_title": "TV Shows Thể loại: {{genreName}}",
   "tv_shows_by_genre_default_title": "TV Shows theo Thể loại",
@@ -90,7 +91,7 @@
   "error_fetching_related_content": "Không thể lấy nội dung liên quan: {{status}}",
   "error_fetching_popular_content": "Không thể lấy nội dung phổ biến: {{status}}",
   "error_fetching_data": "Lỗi khi lấy dữ liệu:",
-  "movie_runtime": "{{runtime}} phút",
+  "movie_runtime": "{runtime} phút",
   "tv_runtime_range": "~{{min}}-{{max}} phút/tập",
   "tv_runtime_single": "{{runtime}} phút/tập",
   "not_available": "N/A",
@@ -102,10 +103,35 @@
   "no_overview": "Không có tóm tắt.",
   "watch_movie_button": "Xem Phim",
   "episode_list_heading": "DANH SÁCH TẬP",
-  "season_label": "Phần {{seasonNumber}}",
-  "episode_label": "Tập {{episodeNumber}}",
+  "season_label": "Phần {seasonNumber}",
+  "episode_label": "Tập {episodeNumber}",
   "related_movies_heading": "PHIM LIÊN QUAN",
   "recommended_movies_heading": "PHIM ĐỀ CỬ",
+  "error_fetching_credits": "Lỗi khi lấy thông tin diễn viên và đoàn làm phim: {{status}}",
+  "director_label": "Đạo diễn",
+  "country_label": "Quốc gia",
+  "producers_label": "Nhà sản xuất",
+  "cast_heading": "DIỄN VIÊN",
+
+
+  "no_biography": "Không có tiểu sử.",
+  "birthday_label": "Ngày sinh",
+  "place_of_birth_label": "Nơi sinh",
+  "known_for_heading": "PHIM VÀ TV SHOW ĐÃ THAM GIA",
+
+
+
+  "error_fetch_movie_data": "Không thể tải dữ liệu phim. Vui lòng thử lại sau.",
+  "no_trailer_available": "Không có trailer khả dụng",
+  "subtitle_label": "Vietsub",
+  "favorite_button": "Yêu thích",
+  "share_button": "Chia sẻ",
+  "movie_content_heading": "Nội dung phim",
+  "no_description": "Chưa có mô tả cho phim này.",
+  "genres_label": "Thể loại",
+  "runtime_minutes": "{runtime} phút",
+  "rating_label": "Đánh giá",
+  "similar_movies_heading": "PHIM TƯƠNG TỰ",
 
 
   "footer_description": "MoviX - Vũ trụ phim - Trang xem phim online chất lượng cao miễn phí Vietsub, thuyết minh, lồng tiếng full HD. Kho phim mới khổng lồ, phim chiếu rạp, phim bộ, phim lẻ từ nhiều quốc gia như Việt Nam, Hàn Quốc, Trung Quốc, Thái Lan, Nhật Bản, Âu Mỹ… đa dạng thể loại. Khám phá nền tảng phim trực tuyến hay nhất 2025 chất lượng 4K!"

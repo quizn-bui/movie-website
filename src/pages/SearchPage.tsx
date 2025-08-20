@@ -203,15 +203,7 @@ export default function SearchPage() {
         >
           {t("movies_tab")}
         </button>
-        <button
-          className={`filter-btn ${activeFilter === "person" ? "active" : ""}`}
-          onClick={() => {
-            setActiveFilter("person");
-            setCurrentPage(1);
-          }}
-        >
-          {t("actors_tab")}
-        </button>
+        
       </div>
       
       {activeFilter === 'movie' && (

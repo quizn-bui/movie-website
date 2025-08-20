@@ -7,6 +7,8 @@ import GenreMediaPage from "./pages/GenreMediaPage";
 import SearchPage from "./pages/SearchPage"; 
 import DetailPage from "./pages/MovieDetail";
 import CountryPage from "./pages/CountryPage";
+import MoviePlayer from "./pages/MoviePlayer";
+import PersonPage from "./pages/PersonPage";
 import "./App.css";
 
 export default function App() {
@@ -22,6 +24,8 @@ export default function App() {
            <Route path="/country/:mediaType/:countryCode" element={<CountryPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/:mediaType/:id" element={<DetailPage />} />
+          <Route path="/watch/:mediaType/:id" element={<MoviePlayer />} />
+          <Route path="/person/:id" element={<PersonPage />} />
         </Routes>
       </main>
       <Footer />

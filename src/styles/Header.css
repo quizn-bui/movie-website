@@ -26,6 +26,7 @@
 }
 
 .header-content {
+  gap: 35px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -217,12 +218,15 @@
 
 .mobile-nav-link-active {
   color: white;
+  font-weight: bold;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .mobile-nav-link-active:hover {
+
   color: #ef4444;
+  font-weight: bold;
 }
 
 .mobile-nav-link {
@@ -261,14 +265,15 @@
 
   .user-actions {
     display: flex;
+    
   }
 
   .mobile-menu-btn {
-    display: none;
+   
   }
 
   .mobile-search {
-    display: none;
+   
   }
 }
 
