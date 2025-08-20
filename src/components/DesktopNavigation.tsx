@@ -16,9 +16,10 @@ interface Country {
 
 interface DesktopNavigationProps {
   currentPath: string;
+  className?: string;
 }
 
-export default function DesktopNavigation({ currentPath }: DesktopNavigationProps) {
+export default function DesktopNavigation({ currentPath, className }: DesktopNavigationProps) {
   const languageContext = useContext(LanguageContext);
   if (!languageContext) {
     throw new Error("DesktopNavigation must be used within a LanguageProvider");
@@ -144,7 +145,7 @@ export default function DesktopNavigation({ currentPath }: DesktopNavigationProp
 
   return (
     <>
-      <nav className="desktop-nav">
+      <nav className={className}>
         <Link to="/movies" className={`nav-link ${currentPath === '/movies' ? 'nav-link-active' : ''}`}>
           {t("header_movies")}
         </Link>

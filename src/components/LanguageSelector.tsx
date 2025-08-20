@@ -3,7 +3,11 @@ import { Globe } from "lucide-react";
 import { LanguageContext } from '../context/LanguageContext';
 import "../styles/LanguageSelector.css";
 
-export default function LanguageSelector() {
+interface LanguageSelectorProps {
+  className?: string;
+}
+
+export default function LanguageSelector({ className }: LanguageSelectorProps) {
   const context = useContext(LanguageContext);
   if (context === undefined) {
     throw new Error('LanguageSelector must be used within a LanguageProvider');
@@ -14,7 +18,7 @@ export default function LanguageSelector() {
   const languageDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event:  MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         languageDropdownRef.current &&
         !languageDropdownRef.current.contains(event.target as Node)
@@ -26,14 +30,14 @@ export default function LanguageSelector() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLanguageChange = (lang: string  ) => {
+  const handleLanguageChange = (lang: string) => {
     setSelectedLanguage(lang);
     setIsLanguageDropdownOpen(false);
   };
 
   return (
     <div
-      className="web-language"
+      className={`language-selector-container ${className}`}
       ref={languageDropdownRef}
       onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
     >

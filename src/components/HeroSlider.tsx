@@ -64,9 +64,9 @@ export default function HeroSlider() {
       const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
       const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
       const apiLanguageCode = {
-        vi: "vi-VN",
-        en: "en-US",
-        zh: "zh-CN",
+        VI: "vi-VN",
+        EN: "en-US",
+        ZH: "zh-CN",
       }[selectedLanguage] || "en-US";
 
       const trendingResponse = await fetch(

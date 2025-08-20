@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { LanguageContext } from "../context/LanguageContext";
 import { Search, Menu, X, User } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import "../styles/Header.css";
 import DesktopNavigation from "./DesktopNavigation";
 import LanguageSelector from "./LanguageSelector";
@@ -88,7 +88,7 @@ export default function Header() {
       VI: "vi-VN",
       en: "en-US",
       zh: "zh-CN",
-    }[selectedLanguage];
+    }[selectedLanguage] || "en-US";
 
     if (!API_KEY || !BASE_URL) return;
 
@@ -122,12 +122,13 @@ export default function Header() {
       <div className="container">
         <div className="header-content">
           <div className="logo-section">
-            <a href="/" className="logo-link">
+            <Link to="/" className="logo-link">
               <h1 className="logo">MoviX</h1>
-            </a>
+            </Link>
           </div>
           <DesktopNavigation
             currentPath={location.pathname}
+            className="desktop-nav"
           />
           <div className="search-container" ref={searchContainerRef}>
             <div className="search-wrapper">
@@ -146,8 +147,8 @@ export default function Header() {
               <div className="search-results-dropdown">
                 {searchResults.length > 0 ? (
                   searchResults.map((movie) => (
-                    <a
-                      href={`/movie/${movie.id}`}
+                    <Link
+                      to={`/movie/${movie.id}`}
                       key={movie.id}
                       className="search-result-item"
                     >
@@ -168,7 +169,7 @@ export default function Header() {
                             : "N/A"}
                         </span>
                       </div>
-                    </a>
+                    </Link>
                   ))
                 ) : (
                   <div className="no-results">
@@ -178,7 +179,7 @@ export default function Header() {
               </div>
             )}
           </div>
-          <LanguageSelector />
+          <LanguageSelector className="web-language" />
           <div className="user-actions" onClick={toggleAuthModal}>
             <User className="user-icon" />
           </div>
@@ -190,6 +191,72 @@ export default function Header() {
           </button>
         </div>
       </div>
+      {/* Mobile Menu Dropdown chỉ hiển thị khi isMenuOpen là true */}
+      {isMenuOpen && (
+        <div className="mobile-menu-dropdown">
+          <div className="mobile-menu-content">
+            <div className="mobile-search-wrapper">
+              <div className="search-wrapper">
+                <Search className="search-icon" />
+                <input
+                  type="text"
+                  placeholder={t("search_placeholder")}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onKeyDown={handleSearch}
+                  className="search-input"
+                />
+              </div>
+              {isSearchFocused && searchQuery && (
+                <div className="search-results-dropdown mobile-dropdown">
+                  {searchResults.length > 0 ? (
+                    searchResults.map((movie) => (
+                      <Link
+                        to={`/movie/${movie.id}`}
+                        key={movie.id}
+                        className="search-result-item"
+                      >
+                        <img
+                          src={
+                            movie.poster_path
+                              ? `https://image.tmdb.org/t/p/w92${movie.poster_path}`
+                              : "https://dummyimage.com/50x75/000/fff&text=No+Image"
+                          }
+                          alt={movie.title}
+                          className="result-poster"
+                        />
+                        <div className="result-info">
+                          <span className="result-title">{movie.title}</span>
+                          <span className="result-year">
+                            {movie.release_date
+                              ? movie.release_date.substring(0, 4)
+                              : "N/A"}
+                          </span>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="no-results">
+                      {t("no_results")}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <DesktopNavigation
+              currentPath={location.pathname}
+              className="mobile-nav"
+            />
+            <div className="mobile-actions">
+              <LanguageSelector />
+              <button className="mobile-user-actions" onClick={toggleAuthModal}>
+                <User className="user-icon" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <AuthModal isOpen={isAuthModalOpen} onClose={toggleAuthModal} />
     </header>
   );
