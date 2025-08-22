@@ -1,14 +1,13 @@
 import React, { useContext } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { LanguageContext } from '../context/LanguageContext';
 import MediaGridPage from './MediaGridPage'; 
+import { countryMap } from '../data/countryMapping';
 
 const CountryPage: React.FC = () => {
   const { mediaType, countryCode } = useParams<{ mediaType: string; countryCode: string }>();
-  const [searchParams] = useSearchParams();
-  const countryName = searchParams.get('name');
-
   const languageContext = useContext(LanguageContext);
+  
   if (!languageContext) {
     throw new Error("CountryPage must be used within a LanguageProvider");
   }
@@ -19,11 +18,14 @@ const CountryPage: React.FC = () => {
   }
 
   const endpoint = `discover/${mediaType}?with_origin_country=${countryCode}`;
-  const pageTitle = countryName
-    ? `${t("media_by_country_title", { countryName })}`
-    : `${t("media_by_country_default_title")}`;
+
+  const countryNameKey = countryMap[countryCode.toUpperCase()];
+  
+  const pageTitle = countryNameKey
+    ? t("media_by_country_title", { countryName: t(countryNameKey) })
+    : t("media_by_country_default_title");
 
   return <MediaGridPage title={pageTitle} endpoint={endpoint} />;
 };
 
-export default CountryPage;
+export default CountryPage;   

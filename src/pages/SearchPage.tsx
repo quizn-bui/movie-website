@@ -1,41 +1,41 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useContext } from "react"
-import { useSearchParams } from "react-router-dom"
-import { Search } from "lucide-react"
-import MovieCard from "../components/MovieCard"
-import ActorCard from "../components/ActorCard"
-import "../styles/SearchPage.css"
-import FilterSelect from "../components/FilterSelect"
-import { sortOptions, yearOptions, genreOptions } from "../data/filterOptions"
-import { LanguageContext } from "../context/LanguageContext"
+import { useState, useEffect, useContext } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Search } from "lucide-react";
+import MovieCard from "../components/MovieCard";
+import ActorCard from "../components/ActorCard";
+import "../styles/SearchPage.css";
+import FilterSelect, { DropdownOption } from "../components/FilterSelect";
+import { sortOptions, yearOptions, genreOptions } from "../data/filterOptions";
+import { LanguageContext } from "../context/LanguageContext";
 
 export interface Movie {
-  id: number
-  title: string
-  name?: string
-  poster_path: string
-  vote_average: number
-  release_date: string
-  first_air_date?: string
-  overview: string
+  id: number;
+  title: string;
+  name?: string;
+  poster_path: string;
+  vote_average: number;
+  release_date: string;
+  first_air_date?: string;
+  overview: string;
   media_type: "movie" | "tv" | "person";
 }
 
 export default function SearchPage() {
-  const context = useContext(LanguageContext)
+  const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error("SearchPage must be used within a LanguageProvider")
+    throw new Error("SearchPage must be used within a LanguageProvider");
   }
-  const { selectedLanguage, t } = context
+  const { selectedLanguage, t } = context;
 
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("query") || "";
 
-  const [searchResults, setSearchResults] = useState<Movie[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [activeFilter, setActiveFilter] = useState("movie")
+  const [searchResults, setSearchResults] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState("movie");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -54,8 +54,8 @@ export default function SearchPage() {
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  const apiKey = import.meta.env.VITE_TMDB_API_KEY
-  const baseUrl = import.meta.env.VITE_TMDB_BASE_URL
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+  const baseUrl = import.meta.env.VITE_TMDB_BASE_URL;
 
   const handleApplyFilters = () => {
     setAppliedFilters(tempFilters);
@@ -66,17 +66,17 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (!searchQuery) {
-        setSearchResults([])
-        setLoading(false)
-        return
+        setSearchResults([]);
+        setLoading(false);
+        return;
       }
 
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
 
         if (!apiKey || !baseUrl) {
-          throw new Error("Missing API configuration")
+          throw new Error("Missing API configuration");
         }
         
         const apiLanguageCode = {
@@ -85,8 +85,8 @@ export default function SearchPage() {
           zh: "zh-CN",
         }[selectedLanguage] || "en-US";
         
-        const endpoint = activeFilter === "movie" ? "/search/movie" : "/search/person"
-        let url = `${baseUrl}${endpoint}?api_key=${apiKey}&query=${encodeURIComponent(searchQuery)}&language=${apiLanguageCode}&page=${currentPage}`
+        const endpoint = activeFilter === "movie" ? "/search/movie" : "/search/person";
+        let url = `${baseUrl}${endpoint}?api_key=${apiKey}&query=${encodeURIComponent(searchQuery)}&language=${apiLanguageCode}&page=${currentPage}`;
 
         const sortValue = appliedFilters.sort.filter(s => s !== '');
         if (sortValue.length > 0) {
@@ -103,24 +103,24 @@ export default function SearchPage() {
           url += `&with_genres=${genres.join(',')}`;
         }
 
-        const response = await fetch(url)
+        const response = await fetch(url);
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json()
-        setSearchResults(data.results || [])
+        const data = await response.json();
+        setSearchResults(data.results || []);
         setTotalPages(data.total_pages || 0);
       } catch (err) {
-        setError(err instanceof Error ? t("error_message") : t("unknown_error"))
+        setError(err instanceof Error ? t("error_message") : t("unknown_error"));
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchSearchResults()
-  }, [searchQuery, activeFilter, currentPage, appliedFilters, apiKey, baseUrl, selectedLanguage, t])
+    fetchSearchResults();
+  }, [searchQuery, activeFilter, currentPage, appliedFilters, apiKey, baseUrl, selectedLanguage, t]);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -185,6 +185,21 @@ export default function SearchPage() {
       </div>
     );
   };
+  
+  const translatedSortOptions: DropdownOption[] = sortOptions.map(option => ({
+    ...option,
+    label: t(option.label)
+  }));
+  
+  const translatedGenreOptions: DropdownOption[] = genreOptions.map(option => ({
+    ...option,
+    label: t(option.label)
+  }));
+  
+  const translatedYearOptions: DropdownOption[] = yearOptions.map(option => ({
+    ...option,
+    label: option.label === 'all_years' ? t('all_years') : option.label
+  }));
 
   return (
     <div className="search-page-container">
@@ -211,7 +226,7 @@ export default function SearchPage() {
           <div className="filters-row">
             <FilterSelect
               label={t("sort_by_label")}
-              options={sortOptions}
+              options={translatedSortOptions}
               onSelect={(values) => setTempFilters({ ...tempFilters, sort: values })}
               selectedValues={tempFilters.sort}
               isOpen={openDropdown === 'sort'}
@@ -219,7 +234,7 @@ export default function SearchPage() {
             />
             <FilterSelect
               label={t("release_year_label")}
-              options={yearOptions}
+              options={translatedYearOptions}
               onSelect={(values) => setTempFilters({ ...tempFilters, year: values })}
               selectedValues={tempFilters.year}
               isOpen={openDropdown === 'year'}
@@ -227,7 +242,7 @@ export default function SearchPage() {
             />
             <FilterSelect
               label={t("genre_label")}
-              options={genreOptions}
+              options={translatedGenreOptions}
               onSelect={(values) => setTempFilters({ ...tempFilters, genres: values })}
               selectedValues={tempFilters.genres}
               isOpen={openDropdown === 'genres'}
@@ -260,5 +275,5 @@ export default function SearchPage() {
         </>
       )}
     </div>
-  )
+  );
 }

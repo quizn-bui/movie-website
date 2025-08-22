@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect, useCallback, useContext } from "react"
-import { useNavigate } from "react-router-dom"
-import '../styles/MediaGridPage.css'
-import MovieCard from '../components/MovieCard'
-import FilterSelect from "../components/FilterSelect"
-import { sortOptions, yearOptions, genreOptions } from "../data/filterOptions"
-import { LanguageContext } from "../context/LanguageContext"
+import React, { useState, useEffect, useCallback, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import '../styles/MediaGridPage.css';
+import MovieCard from '../components/MovieCard';
+import FilterSelect from "../components/FilterSelect";
+import { sortOptions, yearOptions, genreOptions } from "../data/filterOptions";
+import { LanguageContext } from "../context/LanguageContext";
 
 export interface Movie {
   id: number;
@@ -171,21 +171,36 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
     );
   };
 
+  const translatedSortOptions = sortOptions.map(option => ({
+    ...option,
+    label: t(option.label)
+  }));
+  
+  const translatedYearOptions = yearOptions.map(option => ({
+    ...option,
+    label: t(option.label)
+  }));
+
+  const translatedGenreOptions = genreOptions.map(option => ({
+    ...option,
+    label: t(option.label)
+  }));
+
   return (
     <div className="media-grid-page">
       <button onClick={handleBack} className="back-button">
         ← {t("back_button")}
       </button>
 
-      <h1 className="page-title">{title}</h1>
+      <h1 className="page-title">{t(title)}</h1>
       <div className="breadcrumb">
-        {t("homepage")} / {title}
+        {t("homepage")} / {t(title)}
       </div>
       <div className="filters-container">
         <div className="filters-row">
           <FilterSelect
             label={t("sort_by_label")}
-            options={sortOptions}
+            options={translatedSortOptions}
             onSelect={(values) => setTempFilters({ ...tempFilters, sort: values })}
             selectedValues={tempFilters.sort}
             isOpen={openDropdown === 'sort'}
@@ -193,7 +208,7 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
           />
           <FilterSelect
             label={t("release_year_label")}
-            options={yearOptions}
+            options={translatedYearOptions}
             onSelect={(values) => setTempFilters({ ...tempFilters, year: values })}
             selectedValues={tempFilters.year}
             isOpen={openDropdown === 'year'}
@@ -201,18 +216,18 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
           />
           <FilterSelect
             label={t("genre_label")}
-            options={genreOptions}
+            options={translatedGenreOptions}
             onSelect={(values) => setTempFilters({ ...tempFilters, genres: values })}
             selectedValues={tempFilters.genres}
             isOpen={openDropdown === 'genres'}
             onToggle={() => setOpenDropdown(openDropdown === 'genres' ? null : 'genres')}
           />
-          <button onClick={handleApplyFilters} className="filter-button">{t("filter_movies_button")}</button>
+          <button onClick={handleApplyFilters} className="filter-button">{t("filter_button")}</button>
         </div>
       </div>
       
       {loading ? (
-        <p className="loading-initial">{t("loading_initial")}</p>
+        <p className="loading-initial">{t("loading_text")}</p>
       ) : (
         <div className="media-grid">
           {media.length > 0 ? (
@@ -223,7 +238,7 @@ const MediaGridPage: React.FC<MediaGridPageProps> = ({ title, endpoint }) => {
                 mediaType={mediaType} />
             ))
           ) : (
-            <p className="loading-initial">{t("no_data")}</p>
+            <p className="loading-initial">{t("no_data_available")}</p>
           )}
         </div>
       )}

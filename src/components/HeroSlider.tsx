@@ -64,16 +64,16 @@ export default function HeroSlider() {
       const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
       const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
       const apiLanguageCode = {
-        VI: "vi-VN",
-        EN: "en-US",
-        ZH: "zh-CN",
+        vi: "vi-VN",
+        en: "en-US",
+        zh: "zh-CN",
       }[selectedLanguage] || "en-US";
 
       const trendingResponse = await fetch(
         `${BASE_URL}/trending/all/week?api_key=${API_KEY}&language=${apiLanguageCode}`
       );
       const trendingData = await trendingResponse.json();
-      const trendingList = trendingData.results.filter((item: any) => item.media_type !== 'person').slice(0, 5);
+      const trendingList = trendingData.results.filter((item: any) => item.media_type !== 'person').slice(0, 6);
 
       const trendingWithDetails = await Promise.all(
         trendingList.map(async (item: TrendingItem) => {

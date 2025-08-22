@@ -191,7 +191,6 @@ export default function Header() {
           </button>
         </div>
       </div>
-      {/* Mobile Menu Dropdown chỉ hiển thị khi isMenuOpen là true */}
       {isMenuOpen && (
         <div className="mobile-menu-dropdown">
           <div className="mobile-menu-content">

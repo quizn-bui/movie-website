@@ -24,7 +24,7 @@
 .actor-poster-container {
   position: relative;
   width: 100%;
-  padding-bottom: 150%; /* Tỉ lệ khung hình 2:3 */
+  padding-bottom: 150%;
   background-color: #333;
 }
 

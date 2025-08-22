@@ -6,6 +6,7 @@ import MovieCard, { Movie } from '../components/MovieCard';
 import FilterSelect from '../components/FilterSelect';
 import { sortOptions, yearOptions, genreOptions } from '../data/filterOptions';
 import { LanguageContext } from '../context/LanguageContext';
+import { DropdownOption } from '../components/FilterSelect';
 
 interface ViewAllPageProps {
   title: string;
@@ -15,6 +16,7 @@ interface ViewAllPageProps {
 
 const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
   const context = useContext(LanguageContext);
+  
   if (!context) {
     throw new Error("ViewAllPage must be used within a LanguageProvider");
   }
@@ -129,6 +131,21 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
     fetchMovies();
   }, [apiKey, baseUrl, mediaType, appliedFilters, page, selectedLanguage, t]);
 
+  const translatedSortOptions: DropdownOption[] = sortOptions.map(option => ({
+    ...option,
+    label: t(option.label)
+  }));
+  
+  const translatedGenreOptions: DropdownOption[] = genreOptions.map(option => ({
+    ...option,
+    label: t(option.label)
+  }));
+  
+  const translatedYearOptions: DropdownOption[] = yearOptions.map(option => ({
+    ...option,
+    label: option.label === 'all_years' ? t('all_years') : option.label
+  }));
+
   if (loading && page === 1) {
     return <div className="loading-state">{t("loading_movies")}</div>;
   }
@@ -152,7 +169,7 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
         <div className="filters-row">
           <FilterSelect
             label={t("sort_by_label")}
-            options={sortOptions}
+            options={translatedSortOptions}
             onSelect={(values) => setTempFilters({ ...tempFilters, sort: values })}
             selectedValues={tempFilters.sort}
             isOpen={openDropdown === 'sort'}
@@ -160,7 +177,7 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
           />
           <FilterSelect
             label={t("release_year_label")}
-            options={yearOptions}
+            options={translatedYearOptions}
             onSelect={(values) => setTempFilters({ ...tempFilters, year: values })}
             selectedValues={tempFilters.year}
             isOpen={openDropdown === 'year'}
@@ -168,7 +185,7 @@ const ViewAllPage = ({ title, endpoint, onBack }: ViewAllPageProps) => {
           />
           <FilterSelect
             label={t("genre_label")}
-            options={genreOptions}
+            options={translatedGenreOptions}
             onSelect={(values) => setTempFilters({ ...tempFilters, genres: values })}
             selectedValues={tempFilters.genres}
             isOpen={openDropdown === 'genres'}

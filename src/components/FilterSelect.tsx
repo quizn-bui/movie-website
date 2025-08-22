@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import '../styles/FilterSelect.css';
 
-interface DropdownOption {
+
+export interface DropdownOption {
   label: string;
   value: string;
 }

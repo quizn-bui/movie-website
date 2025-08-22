@@ -161,7 +161,7 @@
 }
 
 .section-heading {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 700;
   margin-bottom: 20px;
   color: white;
@@ -389,20 +389,29 @@ body {
     justify-content: center;
   }
   .watch-button {
-    width: 100%;
     justify-content: center;
+    margin-right: auto;
+    margin-left: auto;
   }
   .section-heading {
-    font-size: 24px;
-    text-align: center;
-    width: 100%;
+    font-size: 18px;
+    width: 10%;
   }
   .episode-buttons-scroll {
     padding: 0 10px 20px 10px;
   }
+
+  .additional-info {
+    font-size: 16px;
+  }
+
 }
 
 @media (max-width: 480px) {
+  .additional-info {
+    font-size: 14px;
+  }
+
   .main-title {
     font-size: 28px;
   }
