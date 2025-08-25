@@ -131,7 +131,7 @@
   "movie_content_heading": "Movie Content",
   "no_description": "No description available for this movie.",
   "genres_label": "Genres",
-  "runtime_minutes": "{{runtime}} minutes",
+  "runtime_minutes": "{runtime} minutes",
   "rating_label": "Rating",
   "similar_movies_heading": "SIMILAR MOVIES",
 
@@ -246,6 +246,13 @@
   "country_name_ve": "Venezuela",
   "country_name_vn": "Vietnam",
   "country_name_za": "South Africa",
+
+
+  "chatbot_title": "Movie Assistant",
+  "chatbot_placeholder": "Type your message...",
+  "chatbot_error": "Sorry, an error occurred. Please try again later.",
+  "api_key_error": "API Error: Gemini API key not found.",
+  "gemini_request_error": "Gemini Error: Could not generate content.",
 
 
   "footer_description": "MoviX - Movie Universe - A high-quality free online movie streaming platform with Vietsub, dubbing, and full HD. A huge collection of new movies, cinema hits, TV series, and films from various countries like Vietnam, Korea, China, Thailand, Japan, Europe, and America, covering diverse genres. Discover the best 2025 online movie platform with 4K quality!"

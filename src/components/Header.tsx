@@ -28,6 +28,7 @@ export default function Header() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const authModalRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -67,11 +68,10 @@ export default function Header() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const authButton = document.querySelector('.user-actions');
       if (
         isAuthModalOpen &&
-        authButton &&
-        !authButton.contains(event.target as Node)
+        authModalRef.current &&
+        !authModalRef.current.contains(event.target as Node)
       ) {
         setIsAuthModalOpen(false);
       }
@@ -256,7 +256,11 @@ export default function Header() {
           </div>
         </div>
       )}
-      <AuthModal isOpen={isAuthModalOpen} onClose={toggleAuthModal} />
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={toggleAuthModal} 
+        authModalRef={authModalRef as React.RefObject<HTMLDivElement>} 
+      />
     </header>
   );
 }

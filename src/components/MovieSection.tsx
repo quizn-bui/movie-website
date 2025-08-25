@@ -52,7 +52,37 @@ const MovieSection: React.FC<MovieSectionProps> = ({
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [genres, setGenres] = useState<Genre[]>([]);
 
+  // useEffect để lấy danh sách thể loại (genres) khi ngôn ngữ thay đổi
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+        const baseUrl = import.meta.env.VITE_TMDB_BASE_URL;
+        const apiLanguageCode = {
+          vi: "vi-VN",
+          en: "en-US",
+          zh: "zh-CN",
+        }[selectedLanguage] || "en-US";
+
+        const genresResponse = await fetch(
+          `${baseUrl}/genre/movie/list?api_key=${apiKey}&language=${apiLanguageCode}`
+        );
+        if (!genresResponse.ok) {
+          throw new Error(`HTTP error! status: ${genresResponse.status}`);
+        }
+        const genresData = await genresResponse.json();
+        setGenres(genresData.genres);
+      } catch (err) {
+        console.error("Error fetching genres:", err);
+      }
+    };
+
+    fetchGenres();
+  }, [selectedLanguage]);
+
+  // useEffect để lấy danh sách phim
   useEffect(() => {
     const fetchMovies = async () => {
       try {
@@ -93,11 +123,19 @@ const MovieSection: React.FC<MovieSectionProps> = ({
 
         const slicedData = limit ? dataToProcess.slice(0, limit) : dataToProcess;
         
-        transformedMovies = slicedData.map((item: any) => ({
+        // Ánh xạ `genre_ids` thành `genres`
+        transformedMovies = slicedData.map((item: any) => {
+          const movieGenres = item.genre_ids 
+            ? item.genre_ids.map((id: number) => genres.find(genre => genre.id === id)).filter(Boolean) as Genre[]
+            : [];
+
+          return {
             ...item,
             title: item.title || item.name || t("unknown_title"),
             media_type: item.media_type || (endpoint.includes("movie") ? "movie" : "tv"),
-        }));
+            genres: movieGenres,
+          };
+        });
 
         setMovies(transformedMovies || []);
       } catch (error) {
@@ -109,7 +147,7 @@ const MovieSection: React.FC<MovieSectionProps> = ({
     };
 
     fetchMovies();
-  }, [endpoint, selectedLanguage, t, isPersonCredits, limit]);
+  }, [endpoint, selectedLanguage, t, isPersonCredits, limit, genres]);
 
   if (loading) {
     return (

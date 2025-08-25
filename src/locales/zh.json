@@ -129,7 +129,7 @@
   "movie_content_heading": "电影内容",
   "no_description": "本电影暂无简介。",
   "genres_label": "类型",
-  "runtime_minutes": "{{runtime}} 分钟",
+  "runtime_minutes": "{runtime} 分钟",
   "rating_label": "评分",
   "similar_movies_heading": "类似电影",
 
@@ -244,6 +244,13 @@
   "country_name_ve": "委內瑞拉",
   "country_name_vn": "越南",
   "country_name_za": "南非",
+
+
+  "chatbot_title": "电影助手",
+  "chatbot_placeholder": "输入你的问题...",
+  "chatbot_error": "对不起，发生了一个错误。请稍后再试。",
+  "api_key_error": "API错误：找不到Gemini API密钥。",
+  "gemini_request_error": "Gemini错误：无法生成内容。",
 
   "footer_description": "MoviX - 电影宇宙 - 一个高质量的免费在线电影平台, 提供Vietsub、配音和全高清画质。海量新片、影院大片、电视剧、电影,来自越南、韩国、中国、泰国、日本、欧美等多个国家，类型丰富多样。探索2025年最佳4K画质在线电影平台!"
 }

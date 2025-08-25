@@ -1,4 +1,4 @@
-.auth-modal-overlay {
+.auth-modal__overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@
   z-index: 100;
 }
 
-.auth-modal-content {
+.auth-modal__content {
   background-color: #2b2b2b;
   border-radius: 8px;
   width: 90%;
@@ -24,7 +24,7 @@
   overflow-y: auto;
 }
 
-.auth-modal-close-btn {
+.auth-modal__close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -36,16 +36,16 @@
   transition: color 0.2s ease;
 }
 
-.auth-modal-close-btn:hover {
+.auth-modal__close-btn:hover {
   color: white;
 }
 
-.auth-modal-header {
+.auth-modal__header {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.auth-modal-register-btn {
+.auth-modal__register-btn {
   background-color: #ef1313;
   color: white;
   border: none;
@@ -58,15 +58,15 @@
   margin-bottom: 20px;
 }
 
-.auth-modal-register-btn:hover {
+.auth-modal__register-btn:hover {
   background-color: #ff0f33;
 }
 
-.auth-modal-body .input-group {
+.auth-modal__input-group {
   margin-bottom: 15px;
 }
 
-.auth-modal-body .input-group label {
+.auth-modal__label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -75,11 +75,11 @@
   margin-bottom: 5px;
 }
 
-.auth-modal-body .input-wrapper {
+.auth-modal__input-wrapper {
   position: relative;
 }
 
-.auth-modal-body .input-wrapper input {
+.auth-modal__input {
   width: 100%;
   padding: 10px 10px 10px 35px;
   background-color: #1f2937;
@@ -89,16 +89,16 @@
   font-size: 1rem;
 }
 
-.auth-modal-body .input-wrapper input::placeholder {
+.auth-modal__input::placeholder {
   color: #9ca3af;
 }
 
-.auth-modal-body .input-wrapper input:focus {
+.auth-modal__input:focus {
   outline: none;
   border-color: #ef4444;
 }
 
-.auth-modal-body .input-wrapper .input-icon {
+.auth-modal__input-icon {
   position: absolute;
   left: 10px;
   top: 50%;
@@ -107,7 +107,7 @@
   z-index: 1;
 }
 
-.auth-modal-body .password-toggle {
+.auth-modal__password-toggle {
   position: absolute;
   right: 10px;
   top: 50%;
@@ -117,7 +117,7 @@
   z-index: 2;
 }
 
-.forgot-password {
+.auth-modal__forgot-password {
   display: block;
   text-align: right;
   color: #9ca3af;
@@ -127,11 +127,11 @@
   transition: color 0.2s ease;
 }
 
-.forgot-password:hover {
+.auth-modal__forgot-password:hover {
   color: white;
 }
 
-.auth-modal-login-btn {
+.auth-modal__login-btn {
   background-color: #4a4a4a;
   color: white;
   border: none;
@@ -143,11 +143,11 @@
   width: 100%;
 }
 
-.auth-modal-login-btn:hover {
+.auth-modal__login-btn:hover {
   background-color: #ff0000;
 }
 
-.or-connect {
+.auth-modal__or-connect {
   text-align: center;
   margin: 20px 0;
   color: #9ca3af;
@@ -155,8 +155,8 @@
   position: relative;
 }
 
-.or-connect::before,
-.or-connect::after {
+.auth-modal__or-connect::before,
+.auth-modal__or-connect::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -165,21 +165,21 @@
   background-color: #4a4a4a;
 }
 
-.or-connect::before {
+.auth-modal__or-connect::before {
   left: 0;
 }
 
-.or-connect::after {
+.auth-modal__or-connect::after {
   right: 0;
 }
 
-.social-login {
+.auth-modal__social-login {
   display: flex;
   justify-content: center;
   gap: 15px;
 }
 
-.social-btn {
+.auth-modal__social-btn {
   background-color: #1f2937;
   border: 1px solid #4a4a4a;
   border-radius: 5px;
@@ -193,20 +193,30 @@
   height: 50px;
 }
 
-.social-btn:hover {
+.auth-modal__social-btn:hover {
   background-color: #374151;
 }
 
-.social-btn img {
+.auth-modal__social-btn img {
   width: 30px;
   height: 30px;
 }
 
+.auth-modal__error-message {
+  color: #ff4d4d;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+
 @media (max-width: 768px) {
-    .auth-modal-content {
-        padding: 50px 15px 15px;
-    }
-    .auth-modal-register-btn {
-        width: 100%;
-    }
+  .auth-modal__content {
+    padding: 50px 15px 15px;
+  }
+  .auth-modal__register-btn {
+    width: 100%;
+  }
 }

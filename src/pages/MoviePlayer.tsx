@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { Play, Pause, Volume2, VolumeX, Maximize, Star, Heart, Share2 } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize, Star, Heart, Share2, Rewind, FastForward, Subtitles, Settings, Minimize } from "lucide-react";
 import MovieSection from "../components/MovieSection";
 import { LanguageContext } from "../context/LanguageContext";
 import "../styles/MoviePlayer.css";
@@ -57,7 +57,6 @@ const MoviePlayer = () => {
     zh: "zh-CN",
   }[selectedLanguage] || "en-US";
     
-
   const [movie, setMovie] = useState<Movie | null>(null);
   const [cast, setCast] = useState<Cast[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
@@ -65,11 +64,14 @@ const MoviePlayer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const playerRef = useRef<any>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(100);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const intervalRef = useRef<any>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
   const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
   const TMDB_BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
@@ -121,13 +123,16 @@ const MoviePlayer = () => {
   const onPlayerReady = (event: any) => {
     setIsPlaying(false);
     setDuration(event.target.getDuration());
+    setVolume(event.target.getVolume());
     setIsMuted(event.target.isMuted());
 
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
     intervalRef.current = setInterval(() => {
-      setCurrentTime(event.target.getCurrentTime());
+      if (event.target.getPlayerState() === window.YT.PlayerState.PLAYING) {
+        setCurrentTime(event.target.getCurrentTime());
+      }
     }, 1000);
   };
   
@@ -162,6 +167,14 @@ const MoviePlayer = () => {
     };
 
     const loadYoutubeApi = () => {
+      if (!window.YT) {
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName("script")[0];
+        if (firstScriptTag && firstScriptTag.parentNode) {
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+      }
       window.onYouTubeIframeAPIReady = () => {
         setupPlayer();
       };
@@ -200,15 +213,54 @@ const MoviePlayer = () => {
 
   const toggleMute = () => {
     if (playerRef.current) {
-      if (playerRef.current.isMuted()) {
+      const isCurrentlyMuted = playerRef.current.isMuted();
+      if (isCurrentlyMuted) {
         playerRef.current.unMute();
       } else {
         playerRef.current.mute();
       }
-      setIsMuted(playerRef.current.isMuted());
+      setIsMuted(!isCurrentlyMuted);
     }
   };
   
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseInt(e.target.value, 10);
+    setVolume(newVolume);
+    if (playerRef.current) {
+      playerRef.current.setVolume(newVolume);
+      setIsMuted(newVolume === 0);
+    }
+  };
+
+  const skip = (time: number) => {
+    if (playerRef.current) {
+      const newTime = playerRef.current.getCurrentTime() + time;
+      playerRef.current.seekTo(newTime, true);
+    }
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (progressBarRef.current && playerRef.current) {
+      const rect = progressBarRef.current.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const newTime = (clickX / rect.width) * duration;
+      playerRef.current.seekTo(newTime, true);
+    }
+  };
+  
+  const toggleFullscreen = () => {
+    const element = videoContainerRef.current;
+    if (element) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        element.requestFullscreen().catch((err) => {
+          console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+      }
+    }
+  };
+
   const formatTime = (seconds: number) => {
     if (isNaN(seconds) || seconds < 0) return "0:00";
     const mins = Math.floor(seconds / 60);
@@ -240,7 +292,7 @@ const MoviePlayer = () => {
     <div className="movie-player">
       <div className="movie-player__main">
         <div className="movie-player__main-content">
-          <div className="movie-player__video-container">
+          <div className="movie-player__video-container" ref={videoContainerRef}>
             <div className="movie-player__video-aspect">
               {selectedVideo ? (
                 <div id="youtube-player" className="movie-player__video-iframe"></div>
@@ -259,24 +311,58 @@ const MoviePlayer = () => {
               )}
             </div>
             <div className="movie-player__video-controls">
-              <div className="movie-player__controls-row">
-                <button onClick={togglePlay} className="movie-player__control-button">
-                  {isPlaying ? <Pause className="movie-player__control-icon" /> : <Play className="movie-player__control-icon" />}
-                </button>
-                <button onClick={toggleMute} className="movie-player__control-button">
-                  {isMuted ? <VolumeX className="movie-player__control-icon" /> : <Volume2 className="movie-player__control-icon" />}
-                </button>
-                <div className="movie-player__progress-container">
+              <div className="movie-player__controls-top">
+                <div 
+                  className="movie-player__progress-container"
+                  ref={progressBarRef}
+                  onClick={handleSeek}
+                >
                   <div className="movie-player__progress-bar">
                     <div className="movie-player__progress-fill" style={{ width: `${(currentTime / duration) * 100}%` }} />
                   </div>
                 </div>
-                <span className="movie-player__time-display">
-                  {formatTime(currentTime)} / {formatTime(duration)}
-                </span>
-                <button className="movie-player__control-button">
-                  <Maximize className="movie-player__control-icon" />
-                </button>
+              </div>
+              <div className="movie-player__controls-bottom">
+                <div className="movie-player__controls-left">
+                  <button onClick={togglePlay} className="movie-player__control-button">
+                    {isPlaying ? <Pause className="movie-player__control-icon" /> : <Play className="movie-player__control-icon" />}
+                  </button>
+                  <button onClick={() => skip(-10)} className="movie-player__control-button">
+                    <Rewind className="movie-player__control-icon" />
+                  </button>
+                  <button onClick={() => skip(10)} className="movie-player__control-button">
+                    <FastForward className="movie-player__control-icon" />
+                  </button>
+                  <div className="movie-player__volume-controls">
+                    <button onClick={toggleMute} className="movie-player__control-button">
+                      {isMuted || volume === 0 ? <VolumeX className="movie-player__control-icon" /> : <Volume2 className="movie-player__control-icon" />}
+                    </button>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={isMuted ? 0 : volume}
+                      onChange={handleVolumeChange}
+                      className="movie-player__volume-slider"
+                    />
+                  </div>
+                  <div className="movie-player__time-display">
+                    <span className="movie-player__current-time">{formatTime(currentTime)}</span>
+                    <span className="movie-player__separator"> / </span>
+                    <span className="movie-player__duration">{formatTime(duration)}</span>
+                  </div>
+                </div>
+                <div className="movie-player__controls-right">
+                  <button className="movie-player__control-button">
+                    <Subtitles className="movie-player__control-icon" />
+                  </button>
+                  <button className="movie-player__control-button">
+                    <Settings className="movie-player__control-icon" />
+                  </button>
+                  <button onClick={toggleFullscreen} className="movie-player__control-button">
+                    {document.fullscreenElement ? <Minimize className="movie-player__control-icon" /> : <Maximize className="movie-player__control-icon" />}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -331,7 +417,7 @@ const MoviePlayer = () => {
                   </div>
                   <div>
                     <span className="movie-player__stat-label">{t("rating_label")}: </span>
-                    <span>{movie.vote_average}/10</span>
+                    <span>{movie.vote_average.toFixed(1)}/10</span>
                   </div>
                 </div>
               </div>

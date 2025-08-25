@@ -11,6 +11,7 @@ import CountryPage from "./pages/CountryPage";
 import MoviePlayer from "./pages/MoviePlayer";
 import PersonPage from "./pages/PersonPage";
 import { LanguageContext } from "./context/LanguageContext";
+import MovieChatWidget from "./components/MovieChatWidget"; // Thêm dòng này để import component chatbot
 import "./App.css";
 
 export default function App() {
@@ -37,6 +38,9 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
+      
+      {/* Đặt component chatbot ở đây */}
+      <MovieChatWidget />
     </div>
   );
 }

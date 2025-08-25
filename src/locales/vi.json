@@ -247,6 +247,13 @@
   "country_name_za": "Nam Phi",
 
 
+  "chatbot_title": "Trợ lý phim",
+  "chatbot_placeholder": "Nhập câu hỏi của bạn...",
+  "chatbot_error": "Xin lỗi, đã xảy ra lỗi. Vui lòng thử lại sau.",
+  "api_key_error": "Lỗi API: Không tìm thấy khóa API Gemini.",
+  "gemini_request_error": "Lỗi Gemini: Không thể tạo nội dung.",
+
+
 
   
 

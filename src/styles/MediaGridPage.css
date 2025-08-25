@@ -125,6 +125,22 @@
   color: #a0aec0;
 }
 
+@media (max-width: 876px) {
+  .media-grid {
+    display: grid
+;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
 
-
-
+  @media (max-width: 850px) {
+  .media-grid {
+    display: grid
+;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  }
+}
